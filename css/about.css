@@ -1,0 +1,69 @@
+/* ---------- Content ---------- */
+
+.section-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--gold-bright);
+    margin-bottom: 18px;
+    letter-spacing: 0.03em;
+}
+
+main p {
+    color: var(--parchment-dim);
+    max-width: 68ch;
+    margin-bottom: 18px;
+}
+
+/* ---------- Centered History Section with Justified Paragraphs ---------- */
+
+.history-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.history-container .section-title {
+    text-align: center;
+    width: 100%;
+}
+
+.history-container p {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: justify;
+    text-align-last: center;
+}
+
+/* ---------- Values list ---------- */
+
+.value-row {
+    display: flex;
+    gap: 20px;
+    padding: 24px 0;
+    border-top: 1px solid rgba(201, 162, 74, 0.18);
+}
+
+.value-row:last-child {
+    border-bottom: 1px solid rgba(201, 162, 74, 0.18);
+}
+
+.value-row .num {
+    font-family: var(--font-display);
+    color: var(--gold);
+    font-size: 15px;
+    min-width: 34px;
+}
+
+.value-row h4 {
+    color: var(--parchment);
+    font-size: 16.5px;
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+}
+
+.value-row p {
+    font-size: 14.5px;
+    margin-bottom: 0;
+}

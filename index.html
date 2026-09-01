@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QPAL</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/about.css">
+    <link rel="stylesheet" href="../css/contact.css">
+    <link rel="stylesheet" href="../css/roster.css">
+</head>
+
+<body>
+
+    <!-- FLOATING SIDE LOGO (ADMIN TRIGGER) -->
+    <button class="floating-logo-btn" id="adminTriggerBtn" type="button" aria-label="Toggle Admin Mode">
+        <span class="logo-badge">QPAL</span>
+    </button>
+
+    <!-- NAVIGATION BAR -->
+    <header>
+        <nav class="solid">
+            <a href="#home" class="logo nav-link">QPAL</a>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#roster" class="nav-link">Roster</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- PAGE VIEWS -->
+
+    <!-- 1. HOME SECTION -->
+    <div id="home" class="page-view active">
+        <main>
+            <section class="welcome">
+                <div class="welcome-content"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 2. ABOUT SECTION -->
+    <div id="about" class="page-view">
+        <section class="page-hero">
+            <h1>The Order of QPAL</h1>
+            <p>Where fighters are made, not born.</p>
+        </section>
+
+        <main>
+            <div class="history-container">
+                <h2 class="section-title">Our history</h2>
+                <p>Before QPAL became a clan, it began with just two individuals who met while playing ranked matches in Dueling Grounds. Through their shared interest in the game, they eventually created a Discord server and established a private community specifically for Filipinos who played Dueling Grounds.</p>
+                <p>As the community continued to grow, new friendships were formed and valuable connections were established. With the increasing number of members and the growing sense of community, the founders decided to expand its purpose beyond being a private community. QPAL would become both a clan and an open community, welcoming not only players from the Philippines but also international players who shared the same passion and desire to connect and grow together.</p>
+                <p>On July 13, 2026, the QPAL Clan was officially established. From its humble beginnings as a small community of two individuals, QPAL has grown with the vision of becoming a community-driven clan built upon friendship, unity, and personal growth.</p>
+                <p>QPAL stands, and will continue to stand, as more than just a gaming clan. It is a community where players can build meaningful friendships, create lasting connections, support one another, and grow together both within and beyond the game.</p>
+            </div>
+
+            <div class="value-row">
+                <span class="num">I</span>
+                <div>
+                    <h4>Discipline</h4>
+                    <p>Mastery is repetition. We train the fundamentals long after they stop feeling exciting.</p>
+                </div>
+            </div>
+            <div class="value-row">
+                <span class="num">II</span>
+                <div>
+                    <h4>Strength</h4>
+                    <p>Power built in the body first, then sharpened into technique that holds under pressure.</p>
+                </div>
+            </div>
+            <div class="value-row">
+                <span class="num">III</span>
+                <div>
+                    <h4>Honor</h4>
+                    <p>Every bout is fought with control. Respect for your opponent is part of the technique.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 3. ROSTER SECTION -->
+    <div id="roster" class="page-view">
+        <section class="page-hero">
+            <h1>Clan Roster</h1>
+            <p>Every fighter training under the QPAL banner. Hover a card to see a face, click for the full record.</p>
+        </section>
+
+        <main>
+            <div class="roster-tabs" role="tablist" aria-label="Roster sections">
+                <button class="roster-tab active" data-tab="officers" role="tab" aria-selected="true" type="button">Officers</button>
+                <button class="roster-tab" data-tab="members" role="tab" aria-selected="false" type="button">Members</button>
+            </div>
+
+            <!-- Officers Panel -->
+            <div class="roster-panel active" id="officersPanel" role="tabpanel">
+                <div class="officer-grid">
+                    <div class="person-card person-card--lead person-card--leader" style="--hue:38;" data-name="Sleepy_Person" data-nickname="Sleepy" data-rank="Leader" data-specialty="Strategy &amp; Command" data-joined="Jan 2024" data-bio="Founder of QPAL. Sets the standard every officer trains to and leads the clan's biggest raids.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit officer">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete officer">&times;</button>
+                        </div>
+                        <div class="card-visual">
+                            <span class="position-title">Leader</span>
+                            <img class="avatar" src="../images/sleepy_person.jpg" alt="Sleepy_Person">
+                        </div>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">S</h3>
+                            <h3 class="person-nickname"></h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:150;" data-name="Parrymyweapon" data-nickname="Parry" data-rank="Chieftain" data-specialty="Second-in-command" data-joined="Feb 2024" data-bio="Runs the clan whenever the Leader is out, and keeps every officer aligned on strategy.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit officer">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete officer">&times;</button>
+                        </div>
+                        <div class="card-visual">
+                            <span class="position-title">Chieftain</span>
+                            <img class="avatar" src="../images/parry.jpg" alt="Parrymyweapon">
+                        </div>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Parrymyweapon</h3>
+                            <h3 class="person-nickname">Parry</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:200;" data-name="Vinsi" data-nickname="Vinsi" data-rank="Captain" data-specialty="Frontline offense" data-joined="Mar 2024" data-bio="Leads squads into every major engagement and calls the first strike.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit officer">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete officer">&times;</button>
+                        </div>
+                        <div class="card-visual">
+                            <span class="position-title">Captain</span>
+                            <img class="avatar" src="../images/vinsi.jpg" alt="Vinsi">
+                        </div>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Vinsi</h3>
+                            <h3 class="person-nickname">Vinsi</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:280;" data-name="Whitefall" data-nickname="White" data-rank="Vice Captain" data-specialty="Defense &amp; formation" data-joined="Mar 2024" data-bio="Holds the line when things get messy. Keeps formations tight under pressure.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit officer">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete officer">&times;</button>
+                        </div>
+                        <div class="card-visual">
+                            <span class="position-title">Vice Captain</span>
+                            <img class="avatar" src="../images/mari.jpg" alt="Whitefall">
+                        </div>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Whitefall</h3>
+                            <h3 class="person-nickname">White</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:10;" data-name="Potchi" data-nickname="Potchi" data-rank="Chief Mate" data-specialty="Recruitment &amp; onboarding" data-joined="Apr 2024" data-bio="First person a new recruit talks to. Runs onboarding and answers everyone's questions.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit officer">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete officer">&times;</button>
+                        </div>
+                        <div class="card-visual">
+                            <span class="position-title">Chief Mate</span>
+                            <img class="avatar" src="../images/potchi.jpg" alt="Potchi">
+                        </div>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Potchi</h3>
+                            <h3 class="person-nickname">Potchi</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:90;" data-name="Golden" data-nickname="Gold" data-rank="Operations Master" data-specialty="Event &amp; war logistics" data-joined="May 2024" data-bio="Schedules every war, event, and practice session so nothing overlaps.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit officer">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete officer">&times;</button>
+                        </div>
+                        <div class="card-visual">
+                            <span class="position-title">Operations Master</span>
+                            <img class="avatar" src="../images/golden.jpg" alt="Golden">
+                        </div>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Golden</h3>
+                            <h3 class="person-nickname">Gold</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:320;" data-name="Bubbly" data-nickname="Bubs" data-rank="Prince Charming" data-specialty="Morale &amp; community" data-joined="Jun 2024" data-bio="Keeps the clan chat lively and makes sure every member feels welcome.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit officer">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete officer">&times;</button>
+                        </div>
+                        <div class="card-visual">
+                            <span class="position-title">Prince Charming</span>
+                            <img class="avatar" src="../images/bubs.jpg" alt="Bubbly">
+                        </div>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Bubbly</h3>
+                            <h3 class="person-nickname">Bubs</h3>
+                        </div>
+                    </div>
+                </div>
+                <!-- Admin Add Button -->
+                <button class="add-card-btn admin-only" data-target-section="officers" type="button" title="Add New Officer">+</button>
+            </div>
+
+            <!-- Members Panel -->
+            <div class="roster-panel" id="membersPanel" role="tabpanel">
+                <input type="text" id="memberSearch" class="member-search" placeholder="Search members by name or nickname…" aria-label="Search members">
+                <div class="officer-grid">
+                    <div class="person-card" style="--hue:20;" data-name="Ravenhold" data-nickname="Raven" data-rank="Member" data-specialty="Striking" data-joined="Jul 2024" data-bio="Fast hands and faster footwork. Still chasing a win against Vinsi in sparring.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                        </div>
+                        <div class="card-visual"><span class="rank-icon">🛡</span><div class="avatar">R</div></div>
+                        <span class="person-rank">MEMBER</span>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Ravenhold</h3>
+                            <h3 class="person-nickname">Raven</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:60;" data-name="Mossy_Oak" data-nickname="Mossy" data-rank="Member" data-specialty="Grappling" data-joined="Jul 2024" data-bio="Quiet in chat, terrifying on the mat. Nobody escapes a Mossy_Oak takedown.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                        </div>
+                        <div class="card-visual"><span class="rank-icon">🛡</span><div class="avatar">MO</div></div>
+                        <span class="person-rank">MEMBER</span>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Mossy_Oak</h3>
+                            <h3 class="person-nickname">Mossy</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:190;" data-name="Lunarix" data-nickname="Luna" data-rank="Member" data-specialty="Weapons" data-joined="Aug 2024" data-bio="Picked up the staff three months ago and already outpacing members twice her rank.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                        </div>
+                        <div class="card-visual"><span class="rank-icon">🛡</span><div class="avatar">L</div></div>
+                        <span class="person-rank">MEMBER</span>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Lunarix</h3>
+                            <h3 class="person-nickname">Luna</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:230;" data-name="Bytesize" data-nickname="Byte" data-rank="Member" data-specialty="Striking" data-joined="Aug 2024" data-bio="Small, quick, and always the last one to leave open practice.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                        </div>
+                        <div class="card-visual"><span class="rank-icon">🛡</span><div class="avatar">B</div></div>
+                        <span class="person-rank">MEMBER</span>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Bytesize</h3>
+                            <h3 class="person-nickname">Byte</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:0;" data-name="Redthorn" data-nickname="Red" data-rank="Member" data-specialty="Grappling" data-joined="Sep 2024" data-bio="Recruited straight out of a rival clan. Brought a whole new set of escapes with him.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                        </div>
+                        <div class="card-visual"><span class="rank-icon">🛡</span><div class="avatar">R</div></div>
+                        <span class="person-rank">MEMBER</span>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Redthorn</h3>
+                            <h3 class="person-nickname">Red</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:270;" data-name="Wispervale" data-nickname="Wisp" data-rank="Member" data-specialty="Weapons" data-joined="Sep 2024" data-bio="Trains the blade forms every morning before anyone else is in the hall.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                        </div>
+                        <div class="card-visual"><span class="rank-icon">🛡</span><div class="avatar">W</div></div>
+                        <span class="person-rank">MEMBER</span>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Wispervale</h3>
+                            <h3 class="person-nickname">Wisp</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:130;" data-name="Grimfeather" data-nickname="Grim" data-rank="Member" data-specialty="Striking" data-joined="Oct 2024" data-bio="Newest member on the roster. Already sparring above their weight class.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                        </div>
+                        <div class="card-visual"><span class="rank-icon">🛡</span><div class="avatar">G</div></div>
+                        <span class="person-rank">MEMBER</span>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Grimfeather</h3>
+                            <h3 class="person-nickname">Grim</h3>
+                        </div>
+                    </div>
+                    <div class="person-card" style="--hue:310;" data-name="Emberlyn" data-nickname="Ember" data-rank="Member" data-specialty="Grappling" data-joined="Oct 2024" data-bio="Runs the beginner's grappling drills every weekend, unofficially.">
+                        <div class="card-admin-actions">
+                            <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                            <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                        </div>
+                        <div class="card-visual"><span class="rank-icon">🛡</span><div class="avatar">E</div></div>
+                        <span class="person-rank">MEMBER</span>
+                        <div class="person-name-wrap">
+                            <h3 class="person-name">Emberlyn</h3>
+                            <h3 class="person-nickname">Ember</h3>
+                        </div>
+                    </div>
+                </div>
+                <!-- Admin Add Button -->
+                <button class="add-card-btn admin-only" data-target-section="members" type="button" title="Add New Member">+</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- 4. CONTACT SECTION -->
+    <div id="contact" class="page-view">
+        <section class="page-hero">
+            <h1>Enter the hall</h1>
+            <p>Every fighter starts with a single conversation. Reach out, and we'll get you on the mat.</p>
+        </section>
+
+        <main>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div>
+                        <span>EMAIL</span>
+                        <p>train@qpal.com</p>
+                    </div>
+                    <div>
+                        <span>PHONE</span>
+                        <p>+1 (555) 019-2837</p>
+                    </div>
+                    <div>
+                        <span>TRAINING HALL</span>
+                        <p>Open for sparring and classes, Monday through Saturday.</p>
+                    </div>
+                </div>
+
+                <form>
+                    <div>
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your name">
+                    </div>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com">
+                    </div>
+                    <div>
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" placeholder="Tell us your experience level and what you want to train."></textarea>
+                    </div>
+                    <button type="submit" class="btn">Request a trial class</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; 2026 QPAL. All rights reserved.
+    </footer>
+
+    <!-- MODALS -->
+
+    <!-- 1. View Card Detail Modal -->
+    <div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalName">
+            <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
+            <div class="modal-avatar" id="modalAvatar"></div>
+            <span class="modal-rank" id="modalRank"></span>
+            <h2 class="modal-name" id="modalName"></h2>
+            <div class="modal-details">
+                <div class="modal-details-card">
+                    <span>Specialty</span>
+                    <p id="modalSpecialty"></p>
+                </div>
+                <div class="modal-details-card">
+                    <span>Joined</span>
+                    <p id="modalJoined"></p>
+                </div>
+            </div>
+            <p class="modal-bio" id="modalBio"></p>
+        </div>
+    </div>
+
+    <!-- 2. Admin Login Modal -->
+    <div class="modal-overlay" id="adminAuthModal" aria-hidden="true">
+        <div class="modal-box" role="dialog" aria-modal="true">
+            <button class="modal-close" id="adminAuthClose" type="button">&times;</button>
+            <h2 class="modal-name">Admin Access</h2>
+            <p class="modal-bio" style="margin-bottom: 18px;">Enter the administrator password to manage roster entries.</p>
+            <form id="adminAuthForm">
+                <div>
+                    <label for="adminPasswordInput">Password</label>
+                    <input type="password" id="adminPasswordInput" placeholder="Enter password..." required>
+                </div>
+                <p id="adminAuthError" style="color: #ff6b6b; font-size: 13px; display: none;">Invalid password!</p>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Unlock</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Add / Edit Member Modal -->
+    <div class="modal-overlay" id="addMemberModal" aria-hidden="true">
+        <div class="modal-box" role="dialog" aria-modal="true">
+            <button class="modal-close" id="addMemberClose" type="button">&times;</button>
+            <h2 class="modal-name" id="addModalTitle">Add Roster Member</h2>
+            <form id="addMemberForm">
+                <input type="hidden" id="addTargetSection" value="members">
+                <div>
+                    <label for="addUsername">Username *</label>
+                    <input type="text" id="addUsername" placeholder="e.g. ShadowBlade" required>
+                </div>
+                <div>
+                    <label for="addNickname">Nickname</label>
+                    <input type="text" id="addNickname" placeholder="e.g. Shadow">
+                </div>
+                <div>
+                    <label for="addJoined">Joined Date</label>
+                    <input type="text" id="addJoined" placeholder="e.g. Nov 2024 or Sep 2026">
+                </div>
+                <div>
+                    <label for="addRank">Rank</label>
+                    <input type="text" id="addRank" placeholder="e.g. Member or Captain" value="Member">
+                </div>
+                <div>
+                    <label for="addSpecialty">Specialty</label>
+                    <input type="text" id="addSpecialty" placeholder="e.g. Combat / Tactics">
+                </div>
+                <div>
+                    <label for="addBio">Bio / Details</label>
+                    <textarea id="addBio" rows="3" placeholder="Enter member details or bio..."></textarea>
+                </div>
+                <button type="submit" id="saveMemberBtn" class="btn" style="width: 100%; margin-top: 12px;">Save Entry</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteConfirmModal" aria-hidden="true">
+        <div class="modal-box" role="dialog" aria-modal="true">
+            <button class="modal-close" id="deleteConfirmClose" type="button">&times;</button>
+            <h2 class="modal-name">Confirm Deletion</h2>
+            <p class="modal-bio" id="deleteConfirmMessage">Are you sure you want to delete this fighter?</p>
+            <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: center;">
+                <button type="button" class="btn" id="confirmDeleteBtn" style="background: #e85c5c;">Delete</button>
+                <button type="button" class="btn" id="cancelDeleteBtn" style="background: var(--navy-deep); border: 1px solid var(--gold); color: var(--parchment);">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="../javascript/audio-player.js"></script>
+    <script src="../javascript/roster.js"></script>
+    <script src="../javascript/app.js"></script>
+</body>
+
+</html>
