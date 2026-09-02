@@ -381,9 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
         adminAuthForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (adminPasswordInput.value === 'password') {
-                // The password gate only controls the UI. Firestore itself
-                // only trusts Firebase Auth, so we sign in anonymously here
-                // to actually get write permission from the security rules.
                 const { auth, signInAnonymously } = window.firestoreService;
                 try {
                     await signInAnonymously(auth);
@@ -442,7 +439,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const specialty = document.getElementById('addSpecialty').value.trim() || 'General';
             const bio = document.getElementById('addBio').value.trim() || `${username} joined the roster.`;
 
-            const { db, collection, addDoc, doc, updateDoc } = window.firestoreService;
+            const { db, collection, addDoc, doc, updateDoc, auth, signInAnonymously } = window.firestoreService;
+
+            // Ensure active authentication session before any write
+            try {
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+            } catch (authErr) {
+                console.error("Auth session recovery failed:", authErr);
+                alert("Authentication failed. Check your network or Firebase configuration.");
+                return;
+            }
 
             if (cardToEdit) {
                 const docId = cardToEdit.dataset.id;
@@ -550,8 +558,11 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmDeleteBtn.addEventListener('click', async () => {
             if (cardToDelete) {
                 const docId = cardToDelete.dataset.id;
-                const { db, doc, deleteDoc } = window.firestoreService;
+                const { db, doc, deleteDoc, auth, signInAnonymously } = window.firestoreService;
                 try {
+                    if (!auth.currentUser) {
+                        await signInAnonymously(auth);
+                    }
                     await deleteDoc(doc(db, "roster", docId));
                 } catch (err) {
                     console.error("Error deleting entry from Firestore:", err);
