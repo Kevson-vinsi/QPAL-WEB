@@ -53,5 +53,8 @@
   "allowScripts": {
     "@firebase/util@1.15.3": true,
     "protobufjs@7.6.6": true
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
   }
 }
