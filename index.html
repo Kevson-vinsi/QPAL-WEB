@@ -285,8 +285,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Fires roster.js's own listener (if it registered one before this ran)
-        // and lets other code know once Firebase Auth has resolved its state.
         window.firestoreService = {
             db,
             collection,

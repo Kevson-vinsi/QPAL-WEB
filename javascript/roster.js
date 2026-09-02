@@ -6,10 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentRoster = [];
 
     function initFirestore() {
-        if (!window.firestoreService) {
-            setTimeout(initFirestore, 100);
-            return;
-        }
+        if (!window.firestoreService) return;
 
         const { db, collection, onSnapshot } = window.firestoreService;
         const rosterRef = collection(db, "roster");
@@ -23,6 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }, (error) => {
             console.error("Error fetching Firestore roster updates:", error);
         });
+    }
+
+    window.addEventListener('firestore-ready', initFirestore);
+    if (window.firestoreService) {
+        initFirestore();
     }
 
     function renderRosterCards() {
@@ -91,8 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
             memberSearch.dispatchEvent(new Event('input'));
         }
     }
-
-    initFirestore();
 
     /* ==========================================================
        2. Tab Switching Controls
@@ -441,7 +441,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const { db, collection, addDoc, doc, updateDoc, auth, signInAnonymously } = window.firestoreService;
 
-            // Ensure active authentication session before any write
             try {
                 if (!auth.currentUser) {
                     await signInAnonymously(auth);
