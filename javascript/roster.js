@@ -1,680 +1,574 @@
-/* ==========================================================
-   QPAL — Roster Styles & Enhanced Swipable Popups
-========================================================== */
+document.addEventListener('DOMContentLoaded', () => {
 
-/* ---------- Floating Admin Button (Sides Only) ---------- */
-.floating-logo-btn {
-    position: fixed;
-    top: 50%;
-    left: 18px;
-    transform: translateY(-50%);
-    z-index: 150;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--navy-deep);
-    border: 2px solid var(--gold);
-    color: var(--gold-bright);
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: bold;
-    cursor: grab;
-    box-shadow: 0 0 15px rgba(201, 162, 74, 0.3);
-    transition: box-shadow 0.3s ease, background 0.3s ease, top 0.2s ease, left 0.2s ease, right 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-    touch-action: none;
-}
+    /* ==========================================================
+       1. Firestore Integration Engine
+    ========================================================== */
+    let currentRoster = [];
 
-.floating-logo-btn:active {
-    cursor: grabbing;
-}
+    function initFirestore() {
+        if (!window.firestoreService) {
+            setTimeout(initFirestore, 100);
+            return;
+        }
 
-.floating-logo-btn.admin-active {
-    background: var(--gold);
-    color: var(--ink);
-    border-color: var(--gold-bright);
-    box-shadow: 0 0 20px rgba(230, 200, 120, 0.8);
-}
+        const { db, collection, onSnapshot } = window.firestoreService;
+        const rosterRef = collection(db, "roster");
 
-/* ---------- Admin Mode Elements ---------- */
-.admin-only {
-    display: none !important;
-}
-
-body.admin-mode .admin-only {
-    display: flex !important;
-}
-
-body.admin-mode .card-admin-actions {
-    display: flex !important;
-}
-
-.card-admin-actions {
-    display: none;
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    gap: 6px;
-    z-index: 10;
-}
-
-.card-edit-btn,
-.card-delete-btn {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: none;
-    font-size: 14px;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.card-edit-btn {
-    background: rgba(201, 162, 74, 0.9);
-    color: var(--ink);
-}
-
-.card-edit-btn:hover {
-    background: var(--gold-bright);
-    transform: scale(1.15);
-}
-
-.card-delete-btn {
-    background: rgba(232, 92, 92, 0.85);
-    color: #ffffff;
-    font-size: 16px;
-}
-
-.card-delete-btn:hover {
-    background: #ff3b3b;
-    transform: scale(1.15);
-}
-
-.add-card-btn {
-    margin: 32px auto 0;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: var(--navy-deep);
-    border: 2px dashed var(--gold);
-    color: var(--gold-bright);
-    font-size: 28px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
-}
-
-.add-card-btn:hover {
-    background: var(--gold);
-    color: var(--ink);
-    border-style: solid;
-    transform: scale(1.1);
-}
-
-/* ---------- Form Controls & Image Upload Zone ---------- */
-#addMemberModal textarea,
-#addMemberModal input:not([type="file"]),
-#adminAuthForm input {
-    width: 100%;
-    background: var(--navy);
-    border: 1px solid rgba(201, 162, 74, 0.3);
-    color: var(--parchment);
-    padding: 10px 12px;
-    font-family: var(--font-body);
-    font-size: 13.5px;
-    border-radius: 6px;
-    margin-bottom: 12px;
-}
-
-#addMemberModal label {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    margin-bottom: 4px;
-    text-align: left;
-    text-transform: uppercase;
-}
-
-#addMemberModal textarea:focus,
-#addMemberModal input:not([type="file"]):focus,
-#adminAuthForm input:focus {
-    outline: none;
-    border-color: var(--gold);
-    box-shadow: 0 0 8px rgba(201, 162, 74, 0.25);
-}
-
-/* Styled Image Dropzone Button */
-.avatar-upload-dropzone {
-    position: relative;
-    width: 100%;
-    height: 80px;
-    border: 2px dashed rgba(201, 162, 74, 0.4);
-    border-radius: 10px;
-    background: rgba(8, 12, 20, 0.5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    margin-bottom: 14px;
-    overflow: hidden;
-    transition: border-color 0.25s ease, background 0.25s ease;
-}
-
-.avatar-upload-dropzone:hover {
-    border-color: var(--gold);
-    background: rgba(201, 162, 74, 0.08);
-}
-
-.avatar-upload-dropzone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-}
-
-.upload-icon {
-    font-size: 20px;
-    color: var(--gold);
-    line-height: 1;
-    margin-bottom: 4px;
-}
-
-.upload-text {
-    font-size: 12px;
-    font-family: var(--font-display);
-    color: var(--parchment);
-    letter-spacing: 0.05em;
-}
-
-.upload-preview-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-}
-
-.avatar-upload-dropzone.has-image .upload-preview-img {
-    display: block;
-}
-
-.avatar-upload-dropzone.has-image .upload-icon,
-.avatar-upload-dropzone.has-image .upload-text {
-    display: none;
-}
-
-/* ---------- Roster Navigation Tabs ---------- */
-.roster-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin-bottom: 40px;
-}
-
-.roster-tab {
-    font-family: var(--font-display);
-    font-size: 13px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--parchment-dim);
-    background: transparent;
-    border: 1px solid rgba(201, 162, 74, 0.35);
-    padding: 12px 34px;
-    cursor: pointer;
-    transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.roster-tab:hover {
-    color: var(--gold-bright);
-    border-color: var(--gold);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(201, 162, 74, 0.2);
-}
-
-.roster-tab.active {
-    color: var(--ink);
-    background: var(--gold);
-    border-color: var(--gold);
-    box-shadow: 0 8px 20px rgba(201, 162, 74, 0.3);
-}
-
-.roster-panel {
-    display: none;
-}
-
-.roster-panel.active {
-    display: block;
-}
-
-/* ---------- Grid Layout ---------- */
-.officer-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 24px;
-    margin-top: 20px;
-}
-
-/* ---------- Card Styles & Hover Effects ---------- */
-.person-card {
-    position: relative;
-    background: var(--navy-deep);
-    border: 1px solid rgba(201, 162, 74, 0.25);
-    padding: 26px 22px 28px;
-    text-align: center;
-    cursor: pointer;
-    overflow: hidden;
-    will-change: transform, box-shadow, border-color;
-    transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.35s ease;
-}
-
-.person-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 80%;
-    height: 100%;
-    background: linear-gradient(110deg, transparent 0%, rgba(230, 200, 120, 0.05) 20%, rgba(255, 225, 140, 0.65) 50%, rgba(230, 200, 120, 0.05) 80%, transparent 100%);
-    transform: skewX(-25deg);
-    transition: left 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-    pointer-events: none;
-    z-index: 5;
-}
-
-.person-card:hover::before {
-    left: 170%;
-}
-
-.person-card:hover {
-    transform: translateY(-8px);
-    border-color: var(--gold);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(201, 162, 74, 0.28);
-}
-
-.card-visual {
-    position: relative;
-    height: 90px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 18px;
-    z-index: 1;
-}
-
-/* BIG POSITION TEXT BEFORE HOVER (OFFICERS) */
-.position-title {
-    position: absolute;
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--gold-bright);
-    text-shadow: 0 0 12px rgba(201, 162, 74, 0.4);
-    transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.person-card:hover .position-title {
-    opacity: 0;
-    transform: scale(0.7) translateY(-10px);
-}
-
-/* Fallback Icon for cards without position titles */
-.rank-icon {
-    position: absolute;
-    font-size: 30px;
-    line-height: 1;
-    color: var(--gold);
-    transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.person-card:hover .rank-icon {
-    opacity: 0;
-    transform: scale(0.65) rotate(12deg);
-}
-
-/* PERFECT CIRCLE STYLING ON HOVER */
-.avatar {
-    position: absolute;
-    width: 78px !important;
-    height: 78px !important;
-    min-width: 78px !important;
-    min-height: 78px !important;
-    max-width: 78px !important;
-    max-height: 78px !important;
-    aspect-ratio: 1 / 1 !important;
-    border-radius: 50% !important;
-    border: 2px solid var(--gold-bright);
-    opacity: 0;
-    transform: scale(0.65) rotate(-10deg);
-    transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
-    overflow: hidden;
-    flex-shrink: 0;
-    box-sizing: border-box;
-}
-
-.person-card:hover .avatar {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    box-shadow: 0 0 22px rgba(230, 200, 120, 0.5);
-}
-
-img.avatar {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    display: block;
-}
-
-div.avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-size: 22px;
-    color: var(--ink);
-    background: radial-gradient(circle at 35% 30%, hsl(var(--hue), 70%, 68%), hsl(var(--hue), 55%, 38%));
-}
-
-.person-rank {
-    position: relative;
-    z-index: 1;
-    display: block;
-    font-size: 12px;
-    letter-spacing: 0.18em;
-    color: var(--gold);
-    margin-bottom: 10px;
-}
-
-.person-name {
-    position: relative;
-    z-index: 1;
-    font-family: var(--font-display);
-    font-size: 20px;
-    color: var(--parchment);
-    letter-spacing: 0.02em;
-}
-
-/* ---------- Fixed Name & Nickname Layout (No Overlap) ---------- */
-.person-name-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-    gap: 2px;
-}
-
-.person-name-wrap .person-name,
-.person-name-wrap .person-nickname {
-    position: relative;
-    transition: opacity 0.35s ease, transform 0.35s ease, font-size 0.35s ease;
-}
-
-.person-name-wrap .person-nickname {
-    font-family: var(--font-display);
-    font-size: 16px;
-    color: var(--gold-bright);
-}
-
-/* ---------- Officer Card Specific Hover States ---------- */
-#officersPanel .person-card .person-name {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-#officersPanel .person-card .person-nickname {
-    opacity: 0.7;
-    font-size: 13px;
-}
-
-#officersPanel .person-card:hover .person-name {
-    transform: translateY(-2px);
-    color: var(--gold-bright);
-    text-shadow: 0 0 16px rgba(230, 200, 120, 0.45);
-}
-
-#officersPanel .person-card:hover .person-nickname {
-    opacity: 1;
-    transform: translateY(-2px);
-    font-size: 15px;
-}
-
-/* ---------- Members Card Hover States ---------- */
-#membersPanel .person-card .person-name {
-    opacity: 1;
-}
-
-#membersPanel .person-card .person-nickname {
-    opacity: 0.7;
-    font-size: 13px;
-}
-
-#membersPanel .person-card:hover .person-name {
-    opacity: 0.7;
-    font-size: 15px;
-}
-
-#membersPanel .person-card:hover .person-nickname {
-    opacity: 1;
-    font-size: 17px;
-}
-
-.member-search {
-    display: block;
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto 28px;
-    background: var(--navy-deep);
-    border: 1px solid rgba(201, 162, 74, 0.3);
-    color: var(--parchment);
-    font-family: var(--font-body);
-    font-size: 14px;
-    padding: 11px 16px;
-}
-
-/* ---------- Stylized Swipable Modal Overlays ---------- */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 0;
-    background: rgba(4, 6, 12, 0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@media (min-width: 600px) {
-    .modal-overlay {
-        align-items: center;
-        padding: 20px;
+        onSnapshot(rosterRef, (snapshot) => {
+            currentRoster = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            renderRosterCards();
+        }, (error) => {
+            console.error("Error fetching Firestore roster updates:", error);
+        });
     }
-}
 
-.modal-overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-}
+    function renderRosterCards() {
+        const officersGrid = document.getElementById('officersGrid');
+        const membersGrid = document.getElementById('membersGrid');
 
-/* Card Drawer Body */
-.modal-box {
-    position: relative;
-    width: 100%;
-    max-width: 420px;
-    max-height: 88vh;
-    overflow-y: auto;
-    background: linear-gradient(180deg, rgba(16, 24, 38, 0.98) 0%, var(--navy-deep) 100%);
-    border-top: 2px solid var(--gold);
-    border-left: 1px solid rgba(201, 162, 74, 0.3);
-    border-right: 1px solid rgba(201, 162, 74, 0.3);
-    border-radius: 24px 24px 0 0;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(201, 162, 74, 0.15);
-    padding: 20px 24px 30px;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(100%);
-    transition: transform 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 0.3s ease;
-    touch-action: pan-y;
-}
+        if (officersGrid) officersGrid.innerHTML = '';
+        if (membersGrid) membersGrid.innerHTML = '';
 
-@media (min-width: 600px) {
-    .modal-box {
-        border-radius: 20px;
-        border-bottom: 1px solid rgba(201, 162, 74, 0.3);
-        transform: translateY(30px) scale(0.95);
+        currentRoster.forEach(member => {
+            const isOfficer = member.section === 'officers';
+            const grid = isOfficer ? officersGrid : membersGrid;
+            if (!grid) return;
+
+            const newCard = document.createElement('div');
+            newCard.className = 'person-card';
+            if (isOfficer && (member.rank || '').toLowerCase() === 'leader') {
+                newCard.classList.add('person-card--leader');
+            }
+            newCard.style.setProperty('--hue', (member.hue || 38).toString());
+            newCard.dataset.id = member.id;
+            newCard.dataset.name = member.name || '';
+            newCard.dataset.nickname = member.nickname || member.name || '';
+            newCard.dataset.rank = member.rank || '';
+            newCard.dataset.specialty = member.specialty || '';
+            newCard.dataset.joined = member.joined || '';
+            newCard.dataset.bio = member.bio || '';
+            if (member.avatarUrl) newCard.dataset.avatarUrl = member.avatarUrl;
+
+            const firstLetter = (member.name || 'Q').charAt(0).toUpperCase();
+            const avatarHTML = member.avatarUrl 
+                ? `<img class="avatar" src="${member.avatarUrl}" alt="${member.name}">` 
+                : `<div class="avatar">${firstLetter}</div>`;
+
+            const preHoverVisual = isOfficer 
+                ? `<span class="position-title">${member.rank || 'Officer'}</span>` 
+                : `<span class="rank-icon">🛡</span>`;
+
+            const nameWrapHTML = `
+                <div class="person-name-wrap">
+                    <h3 class="person-name">${member.name || ''}</h3>
+                    <h3 class="person-nickname">${member.nickname || member.name || ''}</h3>
+                </div>
+            `;
+
+            newCard.innerHTML = `
+                <div class="card-admin-actions">
+                    <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                    <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                </div>
+                <div class="card-visual">
+                    ${preHoverVisual}
+                    ${avatarHTML}
+                </div>
+                <span class="person-rank">${(member.rank || '').toUpperCase()}</span>
+                ${nameWrapHTML}
+            `;
+
+            grid.appendChild(newCard);
+            attachCardClickListener(newCard);
+            attachAdminCardListeners(newCard);
+        });
+
+        const memberSearch = document.getElementById('memberSearch');
+        if (memberSearch && memberSearch.value.trim()) {
+            memberSearch.dispatchEvent(new Event('input'));
+        }
     }
-}
 
-.modal-overlay.open .modal-box {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
+    initFirestore();
 
-/* Visual Swipe Pull Bar */
-.modal-box::before {
-    content: '';
-    display: block;
-    width: 42px;
-    height: 5px;
-    background: linear-gradient(90deg, rgba(201, 162, 74, 0.4), var(--gold-bright), rgba(201, 162, 74, 0.4));
-    border-radius: 3px;
-    margin: 0 auto 20px;
-    box-shadow: 0 0 8px rgba(230, 200, 120, 0.5);
-}
+    /* ==========================================================
+       2. Tab Switching Controls
+    ========================================================== */
+    const tabs = document.querySelectorAll('.roster-tab');
+    const panels = document.querySelectorAll('.roster-panel');
 
-.modal-close {
-    position: absolute;
-    top: 16px;
-    right: 18px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(201, 162, 74, 0.2);
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    color: var(--parchment-dim);
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-}
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetTab = tab.getAttribute('data-tab');
 
-.modal-close:hover {
-    color: var(--gold-bright);
-    background: rgba(201, 162, 74, 0.15);
-    border-color: var(--gold);
-}
+            tabs.forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
 
-/* Custom Styled Avatar in Modal */
-.modal-avatar {
-    width: 90px !important;
-    height: 90px !important;
-    min-width: 90px !important;
-    min-height: 90px !important;
-    aspect-ratio: 1 / 1 !important;
-    border-radius: 50% !important;
-    margin: 0 auto 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-size: 30px;
-    color: var(--ink);
-    background: radial-gradient(circle at 35% 30%, hsl(var(--hue, 38), 70%, 68%), hsl(var(--hue, 38), 55%, 38%));
-    border: 3px solid var(--gold-bright);
-    box-shadow: 0 0 25px rgba(201, 162, 74, 0.35);
-    overflow: hidden;
-    flex-shrink: 0;
-    box-sizing: border-box;
-}
+            panels.forEach(panel => {
+                panel.classList.toggle('active', panel.id === `${targetTab}Panel`);
+            });
+        });
+    });
 
-.modal-avatar img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-}
+    /* ==========================================================
+       3. Member Search Filter
+    ========================================================== */
+    const memberSearch = document.getElementById('memberSearch');
+    if (memberSearch) {
+        memberSearch.addEventListener('input', () => {
+            const query = memberSearch.value.trim().toLowerCase();
+            const memberCards = document.querySelectorAll('#membersPanel .person-card');
 
-.modal-rank {
-    display: inline-block;
-    font-size: 10.5px;
-    letter-spacing: 0.18em;
-    color: var(--gold);
-    text-transform: uppercase;
-    background: rgba(201, 162, 74, 0.12);
-    padding: 3px 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(201, 162, 74, 0.3);
-    margin-bottom: 8px;
-}
+            memberCards.forEach(card => {
+                const name = (card.dataset.name || '').toLowerCase();
+                const nickname = (card.dataset.nickname || '').toLowerCase();
+                const matches = !query || name.includes(query) || nickname.includes(query);
+                card.style.display = matches ? '' : 'none';
+            });
+        });
+    }
 
-.modal-name {
-    font-family: var(--font-display);
-    font-size: 24px;
-    color: #ffffff;
-    letter-spacing: 0.02em;
-    margin-bottom: 18px;
-}
+    /* ==========================================================
+       4. Modal Details Engine
+    ========================================================== */
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    const modalAvatar = document.getElementById('modalAvatar');
+    const modalRank = document.getElementById('modalRank');
+    const modalName = document.getElementById('modalName');
+    const modalSpecialty = document.getElementById('modalSpecialty');
+    const modalJoined = document.getElementById('modalJoined');
+    const modalBio = document.getElementById('modalBio');
 
-/* Styled Stat Cards */
-.modal-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 18px;
-}
+    function attachCardClickListener(card) {
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.card-admin-actions')) return;
 
-.modal-details-card {
-    background: rgba(8, 12, 20, 0.6);
-    border: 1px solid rgba(201, 162, 74, 0.18);
-    border-radius: 10px;
-    padding: 10px 12px;
-}
+            const name = card.dataset.name || '';
+            const rank = card.dataset.rank || '';
+            const specialty = card.dataset.specialty || '';
+            const joined = card.dataset.joined || '';
+            const bio = card.dataset.bio || '';
+            const avatarUrl = card.dataset.avatarUrl || '';
+            const hue = card.style.getPropertyValue('--hue') || '38';
 
-.modal-details-card span {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
+            if (modalAvatar) {
+                modalAvatar.innerHTML = '';
+                modalAvatar.style.setProperty('--hue', hue);
 
-.modal-details-card p {
-    font-size: 13px;
-    color: var(--parchment);
-    font-weight: 500;
-}
+                if (avatarUrl) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = avatarUrl;
+                    imgElement.alt = name;
+                    modalAvatar.appendChild(imgElement);
+                } else {
+                    const textBadge = card.querySelector('div.avatar');
+                    const badgeElement = document.createElement('div');
+                    badgeElement.className = 'avatar';
+                    badgeElement.style.opacity = '1';
+                    badgeElement.style.transform = 'none';
+                    badgeElement.textContent = textBadge ? textBadge.textContent : name.charAt(0).toUpperCase();
+                    modalAvatar.appendChild(badgeElement);
+                }
+            }
 
-.modal-bio {
-    font-size: 13.5px;
-    color: var(--parchment-dim);
-    line-height: 1.5;
-    background: rgba(8, 12, 20, 0.4);
-    border-radius: 10px;
-    padding: 14px;
-    border: 1px dashed rgba(201, 162, 74, 0.2);
-    text-align: left;
-}
+            if (modalRank) modalRank.textContent = rank;
+            if (modalName) modalName.textContent = name;
+            if (modalSpecialty) modalSpecialty.textContent = specialty;
+            if (modalJoined) modalJoined.textContent = joined;
+            if (modalBio) modalBio.textContent = bio;
+
+            if (modalOverlay) {
+                modalOverlay.classList.add('open');
+                modalOverlay.setAttribute('aria-hidden', 'false');
+            }
+        });
+    }
+
+    function closeModal(modal) {
+        if (modal) {
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden', 'true');
+            const box = modal.querySelector('.modal-box');
+            if (box) box.style.transform = '';
+        }
+    }
+
+    if (modalClose) modalClose.addEventListener('click', () => closeModal(modalOverlay));
+
+    /* ==========================================================
+       5. Visual Drag & Swipe Gesture Handler
+    ========================================================== */
+    const allModals = document.querySelectorAll('.modal-overlay');
+
+    allModals.forEach(modal => {
+        const box = modal.querySelector('.modal-box');
+        if (!box) return;
+
+        let startY = 0;
+        let currentY = 0;
+        let isSwiping = false;
+
+        box.addEventListener('touchstart', (e) => {
+            if (box.scrollTop > 0) return;
+            startY = e.touches[0].clientY;
+            isSwiping = true;
+            box.style.transition = 'none';
+        }, { passive: true });
+
+        box.addEventListener('touchmove', (e) => {
+            if (!isSwiping) return;
+            currentY = e.touches[0].clientY;
+            const deltaY = currentY - startY;
+
+            if (deltaY > 0) {
+                box.style.transform = `translateY(${deltaY}px)`;
+            }
+        }, { passive: true });
+
+        box.addEventListener('touchend', () => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            const deltaY = currentY - startY;
+            box.style.transition = '';
+
+            if (deltaY > 110) {
+                closeModal(modal);
+            } else {
+                box.style.transform = '';
+            }
+            startY = 0;
+            currentY = 0;
+        }, { passive: true });
+    });
+
+    /* ==========================================================
+       6. Admin Engine & Image Dropzone
+    ========================================================== */
+    let isAdmin = false;
+    let cardToDelete = null;
+    let cardToEdit = null;
+    let currentUploadedBase64 = '';
+
+    const adminTriggerBtn = document.getElementById('adminTriggerBtn');
+    const adminAuthModal = document.getElementById('adminAuthModal');
+    const adminAuthClose = document.getElementById('adminAuthClose');
+    const adminAuthForm = document.getElementById('adminAuthForm');
+    const adminPasswordInput = document.getElementById('adminPasswordInput');
+    const adminAuthError = document.getElementById('adminAuthError');
+
+    const addMemberModal = document.getElementById('addMemberModal');
+    const addMemberClose = document.getElementById('addMemberClose');
+    const addMemberForm = document.getElementById('addMemberForm');
+
+    const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+    const deleteConfirmClose = document.getElementById('deleteConfirmClose');
+    const deleteConfirmMessage = document.getElementById('deleteConfirmMessage');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+    if (addMemberForm && !document.getElementById('avatarDropzone')) {
+        const dropzoneContainer = document.createElement('div');
+        dropzoneContainer.innerHTML = `
+            <label>Profile Picture</label>
+            <div class="avatar-upload-dropzone" id="avatarDropzone">
+                <span class="upload-icon">+</span>
+                <span class="upload-text">Upload Image</span>
+                <img class="upload-preview-img" id="avatarPreviewImg" alt="Preview">
+                <input type="file" id="avatarFileInput" accept="image/*">
+            </div>
+        `;
+        addMemberForm.insertBefore(dropzoneContainer, addMemberForm.firstChild);
+
+        const avatarFileInput = document.getElementById('avatarFileInput');
+        const avatarDropzone = document.getElementById('avatarDropzone');
+        const avatarPreviewImg = document.getElementById('avatarPreviewImg');
+
+        avatarFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    currentUploadedBase64 = event.target.result;
+                    avatarPreviewImg.src = currentUploadedBase64;
+                    avatarDropzone.classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (adminTriggerBtn) {
+        let isDragging = false;
+        let startTouchY = 0;
+        let startTop = 0;
+        let hasDragged = false;
+
+        const onStart = (e) => {
+            isDragging = true;
+            hasDragged = false;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            startTouchY = clientY;
+            startTop = adminTriggerBtn.getBoundingClientRect().top;
+            adminTriggerBtn.style.transition = 'none';
+        };
+
+        const onMove = (e) => {
+            if (!isDragging) return;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const deltaY = clientY - startTouchY;
+
+            if (Math.abs(deltaY) > 5) hasDragged = true;
+
+            const newTop = Math.max(10, Math.min(window.innerHeight - 54, startTop + deltaY));
+            adminTriggerBtn.style.top = `${newTop}px`;
+            adminTriggerBtn.style.transform = 'none';
+
+            if (clientX > window.innerWidth / 2) {
+                adminTriggerBtn.style.left = 'auto';
+                adminTriggerBtn.style.right = '12px';
+            } else {
+                adminTriggerBtn.style.right = 'auto';
+                adminTriggerBtn.style.left = '12px';
+            }
+        };
+
+        const onEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            adminTriggerBtn.style.transition = 'top 0.2s ease, left 0.2s ease, right 0.2s ease, box-shadow 0.3s ease';
+        };
+
+        adminTriggerBtn.addEventListener('mousedown', onStart);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+
+        adminTriggerBtn.addEventListener('touchstart', onStart, { passive: true });
+        window.addEventListener('touchmove', onMove, { passive: true });
+        window.addEventListener('touchend', onEnd);
+
+        adminTriggerBtn.addEventListener('click', (e) => {
+            if (hasDragged) {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                return;
+            }
+            if (isAdmin) {
+                isAdmin = false;
+                document.body.classList.remove('admin-mode');
+                adminTriggerBtn.classList.remove('admin-active');
+                const { auth, signOut } = window.firestoreService;
+                signOut(auth).catch(err => console.error("Error signing out:", err));
+            } else {
+                if (adminPasswordInput) adminPasswordInput.value = '';
+                if (adminAuthError) adminAuthError.style.display = 'none';
+                adminAuthModal.classList.add('open');
+            }
+        });
+    }
+
+    if (adminAuthClose) adminAuthClose.addEventListener('click', () => closeModal(adminAuthModal));
+
+    if (adminAuthForm) {
+        adminAuthForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (adminPasswordInput.value === 'password') {
+                // The password gate only controls the UI. Firestore itself
+                // only trusts Firebase Auth, so we sign in anonymously here
+                // to actually get write permission from the security rules.
+                const { auth, signInAnonymously } = window.firestoreService;
+                try {
+                    await signInAnonymously(auth);
+                    isAdmin = true;
+                    document.body.classList.add('admin-mode');
+                    adminTriggerBtn.classList.add('admin-active');
+                    closeModal(adminAuthModal);
+                } catch (err) {
+                    console.error("Error signing in to Firebase Auth:", err);
+                    if (adminAuthError) {
+                        adminAuthError.textContent = 'Could not authenticate. Check console for details.';
+                        adminAuthError.style.display = 'block';
+                    }
+                }
+            } else {
+                if (adminAuthError) {
+                    adminAuthError.textContent = 'Invalid password!';
+                    adminAuthError.style.display = 'block';
+                }
+            }
+        });
+    }
+
+    document.querySelectorAll('.add-card-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            cardToEdit = null;
+            currentUploadedBase64 = '';
+            
+            const dropzone = document.getElementById('avatarDropzone');
+            if (dropzone) dropzone.classList.remove('has-image');
+            
+            const section = btn.dataset.targetSection;
+            document.getElementById('addTargetSection').value = section;
+            document.getElementById('addModalTitle').textContent = section === 'officers' ? 'Add New Officer' : 'Add New Member';
+            document.getElementById('addUsername').value = '';
+            document.getElementById('addNickname').value = '';
+            document.getElementById('addJoined').value = 'Sep 2026';
+            document.getElementById('addRank').value = section === 'officers' ? 'Leader' : 'Member';
+            document.getElementById('addSpecialty').value = '';
+            document.getElementById('addBio').value = '';
+            addMemberModal.classList.add('open');
+        });
+    });
+
+    if (addMemberClose) addMemberClose.addEventListener('click', () => closeModal(addMemberModal));
+
+    if (addMemberForm) {
+        addMemberForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const section = document.getElementById('addTargetSection').value;
+            const username = document.getElementById('addUsername').value.trim();
+            const nickname = document.getElementById('addNickname').value.trim();
+            const joined = document.getElementById('addJoined').value.trim() || 'Sep 2026';
+            const rank = document.getElementById('addRank').value.trim() || (section === 'officers' ? 'Leader' : 'Member');
+            const specialty = document.getElementById('addSpecialty').value.trim() || 'General';
+            const bio = document.getElementById('addBio').value.trim() || `${username} joined the roster.`;
+
+            const { db, collection, addDoc, doc, updateDoc } = window.firestoreService;
+
+            if (cardToEdit) {
+                const docId = cardToEdit.dataset.id;
+                const docRef = doc(db, "roster", docId);
+                const updatedFields = {
+                    name: username,
+                    nickname: nickname || username,
+                    joined: joined,
+                    rank: rank,
+                    specialty: specialty,
+                    bio: bio,
+                    section: section
+                };
+
+                if (currentUploadedBase64) {
+                    updatedFields.avatarUrl = currentUploadedBase64;
+                }
+
+                try {
+                    await updateDoc(docRef, updatedFields);
+                } catch (err) {
+                    console.error("Error updating document in Firestore:", err);
+                    alert("Couldn't save changes to the server (permission or connection issue). Check the console for details — this edit was NOT persisted.");
+                    return;
+                }
+
+                cardToEdit = null;
+            } else {
+                const hue = Math.floor(Math.random() * 360);
+                const newMemberData = {
+                    section: section,
+                    name: username,
+                    nickname: nickname || username,
+                    joined: joined,
+                    rank: rank,
+                    specialty: specialty,
+                    bio: bio,
+                    hue: hue,
+                    avatarUrl: currentUploadedBase64 || ""
+                };
+
+                try {
+                    await addDoc(collection(db, "roster"), newMemberData);
+                } catch (err) {
+                    console.error("Error saving new document to Firestore:", err);
+                    alert("Couldn't save this entry to the server (permission or connection issue). Check the console for details — it will disappear on refresh.");
+                    return;
+                }
+            }
+
+            addMemberForm.reset();
+            currentUploadedBase64 = '';
+            const dropzone = document.getElementById('avatarDropzone');
+            if (dropzone) dropzone.classList.remove('has-image');
+            closeModal(addMemberModal);
+        });
+    }
+
+    function attachAdminCardListeners(card) {
+        const deleteBtn = card.querySelector('.card-delete-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cardToDelete = card;
+                const name = card.dataset.name || 'this entry';
+                deleteConfirmMessage.textContent = `Are you sure you want to delete ${name}?`;
+                deleteConfirmModal.classList.add('open');
+            });
+        }
+
+        const editBtn = card.querySelector('.card-edit-btn');
+        if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                cardToEdit = card;
+
+                const isOfficerSection = card.closest('#officersPanel') !== null;
+                document.getElementById('addTargetSection').value = isOfficerSection ? 'officers' : 'members';
+                document.getElementById('addModalTitle').textContent = `Edit Record: ${card.dataset.name}`;
+                
+                const dropzone = document.getElementById('avatarDropzone');
+                const avatarPreviewImg = document.getElementById('avatarPreviewImg');
+                currentUploadedBase64 = card.dataset.avatarUrl || '';
+
+                if (currentUploadedBase64 && dropzone && avatarPreviewImg) {
+                    avatarPreviewImg.src = currentUploadedBase64;
+                    dropzone.classList.add('has-image');
+                } else if (dropzone) {
+                    dropzone.classList.remove('has-image');
+                }
+
+                document.getElementById('addUsername').value = card.dataset.name || '';
+                document.getElementById('addNickname').value = card.dataset.nickname || '';
+                document.getElementById('addJoined').value = card.dataset.joined || '';
+                document.getElementById('addRank').value = card.dataset.rank || '';
+                document.getElementById('addSpecialty').value = card.dataset.specialty || '';
+                document.getElementById('addBio').value = card.dataset.bio || '';
+
+                addMemberModal.classList.add('open');
+            });
+        }
+    }
+
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', async () => {
+            if (cardToDelete) {
+                const docId = cardToDelete.dataset.id;
+                const { db, doc, deleteDoc } = window.firestoreService;
+                try {
+                    await deleteDoc(doc(db, "roster", docId));
+                } catch (err) {
+                    console.error("Error deleting entry from Firestore:", err);
+                    alert("Couldn't delete this entry on the server (permission or connection issue). Check the console for details — it will reappear on refresh.");
+                }
+                cardToDelete = null;
+            }
+            closeModal(deleteConfirmModal);
+        });
+    }
+
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', () => closeModal(deleteConfirmModal));
+    if (deleteConfirmClose) deleteConfirmClose.addEventListener('click', () => closeModal(deleteConfirmModal));
+
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal(modal);
+        });
+    });
+});
