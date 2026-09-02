@@ -264,9 +264,12 @@
     <!-- FIREBASE SDK ENGINE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc 
+        import {
+            getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import {
+            getAuth, signInAnonymously, signOut, onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBsvA5TDztWBW1zxIcKIV5BqaB-bIW3Im4",
@@ -280,7 +283,10 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
+        // Fires roster.js's own listener (if it registered one before this ran)
+        // and lets other code know once Firebase Auth has resolved its state.
         window.firestoreService = {
             db,
             collection,
@@ -288,8 +294,14 @@
             addDoc,
             doc,
             updateDoc,
-            deleteDoc
+            deleteDoc,
+            auth,
+            signInAnonymously,
+            signOut,
+            onAuthStateChanged
         };
+
+        window.dispatchEvent(new CustomEvent('firestore-ready'));
     </script>
 
     <!-- SCRIPTS -->

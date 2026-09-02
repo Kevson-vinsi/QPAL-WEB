@@ -365,6 +365,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 isAdmin = false;
                 document.body.classList.remove('admin-mode');
                 adminTriggerBtn.classList.remove('admin-active');
+                const { auth, signOut } = window.firestoreService;
+                signOut(auth).catch(err => console.error("Error signing out:", err));
             } else {
                 if (adminPasswordInput) adminPasswordInput.value = '';
                 if (adminAuthError) adminAuthError.style.display = 'none';
@@ -376,15 +378,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adminAuthClose) adminAuthClose.addEventListener('click', () => closeModal(adminAuthModal));
 
     if (adminAuthForm) {
-        adminAuthForm.addEventListener('submit', (e) => {
+        adminAuthForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (adminPasswordInput.value === 'password') {
-                isAdmin = true;
-                document.body.classList.add('admin-mode');
-                adminTriggerBtn.classList.add('admin-active');
-                closeModal(adminAuthModal);
+                // The password gate only controls the UI. Firestore itself
+                // only trusts Firebase Auth, so we sign in anonymously here
+                // to actually get write permission from the security rules.
+                const { auth, signInAnonymously } = window.firestoreService;
+                try {
+                    await signInAnonymously(auth);
+                    isAdmin = true;
+                    document.body.classList.add('admin-mode');
+                    adminTriggerBtn.classList.add('admin-active');
+                    closeModal(adminAuthModal);
+                } catch (err) {
+                    console.error("Error signing in to Firebase Auth:", err);
+                    if (adminAuthError) {
+                        adminAuthError.textContent = 'Could not authenticate. Check console for details.';
+                        adminAuthError.style.display = 'block';
+                    }
+                }
             } else {
-                if (adminAuthError) adminAuthError.style.display = 'block';
+                if (adminAuthError) {
+                    adminAuthError.textContent = 'Invalid password!';
+                    adminAuthError.style.display = 'block';
+                }
             }
         });
     }
@@ -447,6 +465,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     await updateDoc(docRef, updatedFields);
                 } catch (err) {
                     console.error("Error updating document in Firestore:", err);
+                    alert("Couldn't save changes to the server (permission or connection issue). Check the console for details — this edit was NOT persisted.");
+                    return;
                 }
 
                 cardToEdit = null;
@@ -468,6 +488,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     await addDoc(collection(db, "roster"), newMemberData);
                 } catch (err) {
                     console.error("Error saving new document to Firestore:", err);
+                    alert("Couldn't save this entry to the server (permission or connection issue). Check the console for details — it will disappear on refresh.");
+                    return;
                 }
             }
 
@@ -533,6 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     await deleteDoc(doc(db, "roster", docId));
                 } catch (err) {
                     console.error("Error deleting entry from Firestore:", err);
+                    alert("Couldn't delete this entry on the server (permission or connection issue). Check the console for details — it will reappear on refresh.");
                 }
                 cardToDelete = null;
             }
