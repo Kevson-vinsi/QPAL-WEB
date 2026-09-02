@@ -261,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminAuthModal = document.getElementById('adminAuthModal');
     const adminAuthClose = document.getElementById('adminAuthClose');
     const adminAuthForm = document.getElementById('adminAuthForm');
+    const adminEmailInput = document.getElementById('adminEmailInput');
     const adminPasswordInput = document.getElementById('adminPasswordInput');
     const adminAuthError = document.getElementById('adminAuthError');
 
@@ -368,6 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { auth, signOut } = window.firestoreService;
                 signOut(auth).catch(err => console.error("Error signing out:", err));
             } else {
+                if (adminEmailInput) adminEmailInput.value = '';
                 if (adminPasswordInput) adminPasswordInput.value = '';
                 if (adminAuthError) adminAuthError.style.display = 'none';
                 adminAuthModal.classList.add('open');
@@ -380,24 +382,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adminAuthForm) {
         adminAuthForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (adminPasswordInput.value === 'password') {
-                const { auth, signInAnonymously } = window.firestoreService;
-                try {
-                    await signInAnonymously(auth);
-                    isAdmin = true;
-                    document.body.classList.add('admin-mode');
-                    adminTriggerBtn.classList.add('admin-active');
-                    closeModal(adminAuthModal);
-                } catch (err) {
-                    console.error("Error signing in to Firebase Auth:", err);
-                    if (adminAuthError) {
-                        adminAuthError.textContent = 'Could not authenticate. Check console for details.';
-                        adminAuthError.style.display = 'block';
-                    }
-                }
-            } else {
+            const email = adminEmailInput.value.trim();
+            const password = adminPasswordInput.value;
+            const { auth, signInWithEmailAndPassword } = window.firestoreService;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                isAdmin = true;
+                document.body.classList.add('admin-mode');
+                adminTriggerBtn.classList.add('admin-active');
+                closeModal(adminAuthModal);
+            } catch (err) {
+                console.error("Error signing in to Firebase Auth:", err);
                 if (adminAuthError) {
-                    adminAuthError.textContent = 'Invalid password!';
+                    adminAuthError.textContent = 'Could not authenticate. Check your email and password.';
                     adminAuthError.style.display = 'block';
                 }
             }
@@ -439,15 +437,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const specialty = document.getElementById('addSpecialty').value.trim() || 'General';
             const bio = document.getElementById('addBio').value.trim() || `${username} joined the roster.`;
 
-            const { db, collection, addDoc, doc, updateDoc, auth, signInAnonymously } = window.firestoreService;
+            const { db, collection, addDoc, doc, updateDoc, auth } = window.firestoreService;
 
-            try {
-                if (!auth.currentUser) {
-                    await signInAnonymously(auth);
-                }
-            } catch (authErr) {
-                console.error("Auth session recovery failed:", authErr);
-                alert("Authentication failed. Check your network or Firebase configuration.");
+            if (!auth.currentUser) {
+                alert("Please sign in as an administrator first.");
                 return;
             }
 
@@ -557,10 +550,13 @@ document.addEventListener('DOMContentLoaded', () => {
         confirmDeleteBtn.addEventListener('click', async () => {
             if (cardToDelete) {
                 const docId = cardToDelete.dataset.id;
-                const { db, doc, deleteDoc, auth, signInAnonymously } = window.firestoreService;
+                const { db, doc, deleteDoc, auth } = window.firestoreService;
                 try {
                     if (!auth.currentUser) {
-                        await signInAnonymously(auth);
+                        alert("Please sign in as an administrator first.");
+                        cardToDelete = null;
+                        closeModal(deleteConfirmModal);
+                        return;
                     }
                     await deleteDoc(doc(db, "roster", docId));
                 } catch (err) {

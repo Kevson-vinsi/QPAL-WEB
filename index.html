@@ -201,11 +201,15 @@
         <div class="modal-box" role="dialog" aria-modal="true">
             <button class="modal-close" id="adminAuthClose" type="button">&times;</button>
             <h2 class="modal-name">Admin Access</h2>
-            <p class="modal-bio" style="margin-bottom: 18px;">Enter the administrator password to manage roster entries.</p>
+            <p class="modal-bio" style="margin-bottom: 18px;">Sign in with an authorized administrator account to manage roster entries.</p>
             <form id="adminAuthForm">
                 <div>
+                    <label for="adminEmailInput">Email</label>
+                    <input type="email" id="adminEmailInput" placeholder="admin@example.com" autocomplete="username" required>
+                </div>
+                <div>
                     <label for="adminPasswordInput">Password</label>
-                    <input type="password" id="adminPasswordInput" placeholder="Enter password..." required>
+                    <input type="password" id="adminPasswordInput" placeholder="Enter password..." autocomplete="current-password" required>
                 </div>
                 <p id="adminAuthError" style="color: #ff6b6b; font-size: 13px; display: none;">Invalid password!</p>
                 <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Unlock</button>
@@ -264,23 +268,14 @@
 
     <!-- FIREBASE SDK ENGINE -->
     <script type="module">
+        import { firebaseConfig } from "./javascript/firebase-config.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import {
             getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import {
-            getAuth, signInAnonymously, signOut, onAuthStateChanged
+            getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBsvA5TDztWBW1zxIcKIV5BqaB-bIW3Im4",
-            authDomain: "qpal-db.firebaseapp.com",
-            projectId: "qpal-db",
-            storageBucket: "qpal-db.firebasestorage.app",
-            messagingSenderId: "792011561319",
-            appId: "1:792011561319:web:10d72341216cda1acdf7c2",
-            measurementId: "G-HJW5YVPPNM"
-        };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -295,7 +290,7 @@
             updateDoc,
             deleteDoc,
             auth,
-            signInAnonymously,
+            signInWithEmailAndPassword,
             signOut,
             onAuthStateChanged
         };
