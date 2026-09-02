@@ -1,7 +1,101 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     /* ==========================================================
-       1. Tab Switching Controls
+       1. Firestore Integration Engine
+    ========================================================== */
+    let currentRoster = [];
+
+    function initFirestore() {
+        if (!window.firestoreService) {
+            setTimeout(initFirestore, 100);
+            return;
+        }
+
+        const { db, collection, onSnapshot } = window.firestoreService;
+        const rosterRef = collection(db, "roster");
+
+        onSnapshot(rosterRef, (snapshot) => {
+            currentRoster = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            renderRosterCards();
+        }, (error) => {
+            console.error("Error fetching Firestore roster updates:", error);
+        });
+    }
+
+    function renderRosterCards() {
+        const officersGrid = document.getElementById('officersGrid');
+        const membersGrid = document.getElementById('membersGrid');
+
+        if (officersGrid) officersGrid.innerHTML = '';
+        if (membersGrid) membersGrid.innerHTML = '';
+
+        currentRoster.forEach(member => {
+            const isOfficer = member.section === 'officers';
+            const grid = isOfficer ? officersGrid : membersGrid;
+            if (!grid) return;
+
+            const newCard = document.createElement('div');
+            newCard.className = 'person-card';
+            if (isOfficer && (member.rank || '').toLowerCase() === 'leader') {
+                newCard.classList.add('person-card--leader');
+            }
+            newCard.style.setProperty('--hue', (member.hue || 38).toString());
+            newCard.dataset.id = member.id;
+            newCard.dataset.name = member.name || '';
+            newCard.dataset.nickname = member.nickname || member.name || '';
+            newCard.dataset.rank = member.rank || '';
+            newCard.dataset.specialty = member.specialty || '';
+            newCard.dataset.joined = member.joined || '';
+            newCard.dataset.bio = member.bio || '';
+            if (member.avatarUrl) newCard.dataset.avatarUrl = member.avatarUrl;
+
+            const firstLetter = (member.name || 'Q').charAt(0).toUpperCase();
+            const avatarHTML = member.avatarUrl 
+                ? `<img class="avatar" src="${member.avatarUrl}" alt="${member.name}">` 
+                : `<div class="avatar">${firstLetter}</div>`;
+
+            const preHoverVisual = isOfficer 
+                ? `<span class="position-title">${member.rank || 'Officer'}</span>` 
+                : `<span class="rank-icon">🛡</span>`;
+
+            const nameWrapHTML = `
+                <div class="person-name-wrap">
+                    <h3 class="person-name">${member.name || ''}</h3>
+                    <h3 class="person-nickname">${member.nickname || member.name || ''}</h3>
+                </div>
+            `;
+
+            newCard.innerHTML = `
+                <div class="card-admin-actions">
+                    <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
+                    <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
+                </div>
+                <div class="card-visual">
+                    ${preHoverVisual}
+                    ${avatarHTML}
+                </div>
+                <span class="person-rank">${(member.rank || '').toUpperCase()}</span>
+                ${nameWrapHTML}
+            `;
+
+            grid.appendChild(newCard);
+            attachCardClickListener(newCard);
+            attachAdminCardListeners(newCard);
+        });
+
+        const memberSearch = document.getElementById('memberSearch');
+        if (memberSearch && memberSearch.value.trim()) {
+            memberSearch.dispatchEvent(new Event('input'));
+        }
+    }
+
+    initFirestore();
+
+    /* ==========================================================
+       2. Tab Switching Controls
     ========================================================== */
     const tabs = document.querySelectorAll('.roster-tab');
     const panels = document.querySelectorAll('.roster-panel');
@@ -24,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================================
-       2. Member Search Filter
+       3. Member Search Filter
     ========================================================== */
     const memberSearch = document.getElementById('memberSearch');
     if (memberSearch) {
@@ -42,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==========================================================
-       3. Modal Details Engine
+       4. Modal Details Engine
     ========================================================== */
     const modalOverlay = document.getElementById('modalOverlay');
     const modalClose = document.getElementById('modalClose');
@@ -75,21 +169,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     imgElement.alt = name;
                     modalAvatar.appendChild(imgElement);
                 } else {
-                    const cardImage = card.querySelector('img.avatar');
-                    if (cardImage && cardImage.getAttribute('src')) {
-                        const imgElement = document.createElement('img');
-                        imgElement.src = cardImage.getAttribute('src');
-                        imgElement.alt = name;
-                        modalAvatar.appendChild(imgElement);
-                    } else {
-                        const textBadge = card.querySelector('div.avatar');
-                        const badgeElement = document.createElement('div');
-                        badgeElement.className = 'avatar';
-                        badgeElement.style.opacity = '1';
-                        badgeElement.style.transform = 'none';
-                        badgeElement.textContent = textBadge ? textBadge.textContent : name.charAt(0).toUpperCase();
-                        modalAvatar.appendChild(badgeElement);
-                    }
+                    const textBadge = card.querySelector('div.avatar');
+                    const badgeElement = document.createElement('div');
+                    badgeElement.className = 'avatar';
+                    badgeElement.style.opacity = '1';
+                    badgeElement.style.transform = 'none';
+                    badgeElement.textContent = textBadge ? textBadge.textContent : name.charAt(0).toUpperCase();
+                    modalAvatar.appendChild(badgeElement);
                 }
             }
 
@@ -106,8 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    document.querySelectorAll('.person-card').forEach(attachCardClickListener);
-
     function closeModal(modal) {
         if (modal) {
             modal.classList.remove('open');
@@ -120,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalClose) modalClose.addEventListener('click', () => closeModal(modalOverlay));
 
     /* ==========================================================
-       4. Visual Drag & Swipe Gesture Handler
+       5. Visual Drag & Swipe Gesture Handler
     ========================================================== */
     const allModals = document.querySelectorAll('.modal-overlay');
 
@@ -166,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* ==========================================================
-       5. Admin Engine & Image Dropzone
+       6. Admin Engine & Image Dropzone
     ========================================================== */
     let isAdmin = false;
     let cardToDelete = null;
@@ -329,11 +413,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addMemberClose) addMemberClose.addEventListener('click', () => closeModal(addMemberModal));
 
     if (addMemberForm) {
-        addMemberForm.addEventListener('submit', (e) => {
+        addMemberForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const section = document.getElementById('addTargetSection').value;
-            const avatarUrl = currentUploadedBase64;
             const username = document.getElementById('addUsername').value.trim();
             const nickname = document.getElementById('addNickname').value.trim();
             const joined = document.getElementById('addJoined').value.trim() || 'Sep 2026';
@@ -341,99 +424,51 @@ document.addEventListener('DOMContentLoaded', () => {
             const specialty = document.getElementById('addSpecialty').value.trim() || 'General';
             const bio = document.getElementById('addBio').value.trim() || `${username} joined the roster.`;
 
+            const { db, collection, addDoc, doc, updateDoc } = window.firestoreService;
+
             if (cardToEdit) {
-                cardToEdit.dataset.name = username;
-                cardToEdit.dataset.nickname = nickname || username;
-                cardToEdit.dataset.joined = joined;
-                cardToEdit.dataset.rank = rank;
-                cardToEdit.dataset.specialty = specialty;
-                cardToEdit.dataset.bio = bio;
-                if (avatarUrl) cardToEdit.dataset.avatarUrl = avatarUrl;
+                const docId = cardToEdit.dataset.id;
+                const docRef = doc(db, "roster", docId);
+                const updatedFields = {
+                    name: username,
+                    nickname: nickname || username,
+                    joined: joined,
+                    rank: rank,
+                    specialty: specialty,
+                    bio: bio,
+                    section: section
+                };
 
-                const positionTitleEl = cardToEdit.querySelector('.position-title');
-                if (positionTitleEl) positionTitleEl.textContent = rank;
-
-                const avatarContainer = cardToEdit.querySelector('.card-visual');
-                if (avatarContainer) {
-                    const existingAvatar = avatarContainer.querySelector('.avatar');
-                    if (existingAvatar) existingAvatar.remove();
-
-                    const activeAvatar = cardToEdit.dataset.avatarUrl;
-                    if (activeAvatar) {
-                        const img = document.createElement('img');
-                        img.className = 'avatar';
-                        img.src = activeAvatar;
-                        img.alt = username;
-                        avatarContainer.appendChild(img);
-                    } else {
-                        const div = document.createElement('div');
-                        div.className = 'avatar';
-                        div.textContent = username.charAt(0).toUpperCase();
-                        avatarContainer.appendChild(div);
-                    }
+                if (currentUploadedBase64) {
+                    updatedFields.avatarUrl = currentUploadedBase64;
                 }
 
-                const rankEl = cardToEdit.querySelector('.person-rank');
-                if (rankEl) rankEl.textContent = rank.toUpperCase();
-
-                const nameEl = cardToEdit.querySelector('.person-name');
-                if (nameEl) nameEl.textContent = username;
-
-                const nicknameEl = cardToEdit.querySelector('.person-nickname');
-                if (nicknameEl) nicknameEl.textContent = nickname || username;
+                try {
+                    await updateDoc(docRef, updatedFields);
+                } catch (err) {
+                    console.error("Error updating document in Firestore:", err);
+                }
 
                 cardToEdit = null;
             } else {
                 const hue = Math.floor(Math.random() * 360);
-                const grid = document.querySelector(`#${section}Panel .officer-grid`);
-                if (!grid) return;
+                const newMemberData = {
+                    section: section,
+                    name: username,
+                    nickname: nickname || username,
+                    joined: joined,
+                    rank: rank,
+                    specialty: specialty,
+                    bio: bio,
+                    hue: hue,
+                    avatarUrl: currentUploadedBase64 || ""
+                };
 
-                const newCard = document.createElement('div');
-                newCard.className = 'person-card';
-                if (section === 'officers' && rank.toLowerCase() === 'leader') {
-                    newCard.classList.add('person-card--leader');
+                try {
+                    await addDoc(collection(db, "roster"), newMemberData);
+                } catch (err) {
+                    console.error("Error saving new document to Firestore:", err);
                 }
-                newCard.style.setProperty('--hue', hue.toString());
-                newCard.dataset.name = username;
-                if (nickname) newCard.dataset.nickname = nickname;
-                newCard.dataset.rank = rank;
-                newCard.dataset.specialty = specialty;
-                newCard.dataset.joined = joined;
-                newCard.dataset.bio = bio;
-                if (avatarUrl) newCard.dataset.avatarUrl = avatarUrl;
-
-                const firstLetter = username.charAt(0).toUpperCase();
-                const avatarHTML = avatarUrl 
-                    ? `<img class="avatar" src="${avatarUrl}" alt="${username}">` 
-                    : `<div class="avatar">${firstLetter}</div>`;
-
-                const preHoverVisual = section === 'officers' 
-                    ? `<span class="position-title">${rank}</span>` 
-                    : `<span class="rank-icon">🛡</span>`;
-
-                const nameWrapHTML = `
-                    <div class="person-name-wrap">
-                        <h3 class="person-name">${username}</h3>
-                        <h3 class="person-nickname">${nickname || username}</h3>
-                    </div>
-                `;
-
-                newCard.innerHTML = `
-                    <div class="card-admin-actions">
-                        <button class="card-edit-btn" type="button" aria-label="Edit member">&#9998;</button>
-                        <button class="card-delete-btn" type="button" aria-label="Delete member">&times;</button>
-                    </div>
-                    <div class="card-visual">
-                        ${preHoverVisual}
-                        ${avatarHTML}
-                    </div>
-                    <span class="person-rank">${rank.toUpperCase()}</span>
-                    ${nameWrapHTML}
-                `;
-
-                grid.appendChild(newCard);
-                attachCardClickListener(newCard);
-                attachAdminCardListeners(newCard);
             }
 
             addMemberForm.reset();
@@ -489,12 +524,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    document.querySelectorAll('.person-card').forEach(attachAdminCardListeners);
-
     if (confirmDeleteBtn) {
-        confirmDeleteBtn.addEventListener('click', () => {
+        confirmDeleteBtn.addEventListener('click', async () => {
             if (cardToDelete) {
-                cardToDelete.remove();
+                const docId = cardToDelete.dataset.id;
+                const { db, doc, deleteDoc } = window.firestoreService;
+                try {
+                    await deleteDoc(doc(db, "roster", docId));
+                } catch (err) {
+                    console.error("Error deleting entry from Firestore:", err);
+                }
                 cardToDelete = null;
             }
             closeModal(deleteConfirmModal);

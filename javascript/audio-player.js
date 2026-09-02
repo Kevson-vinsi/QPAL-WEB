@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. Inject hidden audio element dynamically
     const music = document.createElement('audio');
     music.id = 'bg-music';
     music.loop = true;
@@ -13,16 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     music.appendChild(source);
     document.body.appendChild(music);
 
-    // 2. Restore playback position
     const savedTime = localStorage.getItem('qpal_music_time');
     if (savedTime) {
         music.currentTime = parseFloat(savedTime);
     }
 
-    // Function to handle continuous auto-playback
     const playAudio = () => {
         music.play().catch(() => {
-            // If browser blocks initial autoplay without interaction, play on first user click/tap/keypress
             const unlockAudio = () => {
                 music.play();
                 document.removeEventListener('click', unlockAudio);
@@ -35,10 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Start playback immediately
     playAudio();
 
-    // 3. Keep saving current timestamp before page transitions
     window.addEventListener('beforeunload', () => {
         localStorage.setItem('qpal_music_time', music.currentTime);
     });
