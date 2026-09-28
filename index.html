@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QPAL | Dark Emerald & Gold Elite Clan</title>
+    
+    <!-- CSS Libraries -->
+    <script src="tailwind.config.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Epic Fantasy & Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&family=Cinzel+Decorative:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="relative min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-black">
+
+    <!-- Canvas Background for Deep Emerald & Gold Sparks -->
+    <canvas id="particle-canvas"></canvas>
+
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 mythic-panel border-b border-gold-500/20" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-1000 via-emerald-900 to-gold-500 p-0.5 border border-gold-500/50 shadow-xl group-hover:scale-105 transition-transform">
+                        <div class="w-full h-full rounded-full bg-emerald-1000 flex items-center justify-center overflow-hidden relative">
+                            <div class="absolute inset-0 bg-emerald-900/40"></div>
+                            <span class="font-cinzelDeco font-black text-xl gold-text-gradient group-hover:rotate-12 transition-transform duration-300">Q</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-cinzel font-black text-2xl tracking-widest gold-text-bright leading-none">
+                            QPAL
+                        </span>
+                        <span class="text-[9px] font-rajdhani uppercase tracking-[0.25em] text-emerald-400 mt-1">
+                            DARK EMERALD SQUAD
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex space-x-8 font-cinzel text-xs font-bold tracking-widest text-gray-300">
+                    <a href="#about" class="hover:text-gold-400 transition-colors py-2 flex items-center gap-1.5 hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]">
+                        <i class="fa-solid fa-scroll text-[10px] text-gold-500"></i> LORE
+                    </a>
+                    <a href="#roster" class="hover:text-gold-400 transition-colors py-2 flex items-center gap-1.5 hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]">
+                        <i class="fa-solid fa-shield-halved text-[10px] text-gold-500"></i> ROSTER
+                    </a>
+                    <a href="#stats" class="hover:text-gold-400 transition-colors py-2 flex items-center gap-1.5 hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]">
+                        <i class="fa-solid fa-trophy text-[10px] text-gold-500"></i> HALL OF FAME
+                    </a>
+                    <a href="#join" class="hover:text-gold-400 transition-colors py-2 flex items-center gap-1.5 hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]">
+                        <i class="fa-solid fa-crown text-[10px] text-gold-500"></i> RECRUITMENT
+                    </a>
+                </nav>
+
+                <!-- Audio Toggle & CTA -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button id="audio-toggle" title="Toggle Atmospheric Audio" class="w-10 h-10 rounded-full mythic-panel flex items-center justify-center text-gold-400 hover:text-gold-300 hover:border-gold-400 transition-all">
+                        <i class="fa-solid fa-volume-xmark text-sm" id="audio-icon"></i>
+                    </button>
+
+                    <a href="#join" class="btn-gold-shimmer px-6 py-2.5 text-emerald-1000 font-cinzel font-black text-xs uppercase tracking-widest shadow-md hover:scale-105 border border-gold-300">
+                        Pledge Oath
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center space-x-2">
+                    <button id="audio-toggle-mobile" class="p-2 text-gold-400">
+                        <i class="fa-solid fa-volume-xmark" id="audio-icon-mobile"></i>
+                    </button>
+                    <button id="mobile-menu-btn" class="text-gold-400 hover:text-white p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mythic-panel border-t border-gold-500/20 px-6 py-6 space-y-4 font-cinzel text-sm">
+            <a href="#about" class="block text-gray-200 hover:text-gold-400">THE LORE</a>
+            <a href="#roster" class="block text-gray-200 hover:text-gold-400">CLAN ROSTER</a>
+            <a href="#stats" class="block text-gray-200 hover:text-gold-400">HALL OF FAME</a>
+            <a href="#join" class="block text-gold-400 font-bold">RECRUITMENT</a>
+        </div>
+    </header>
+
+    <main class="flex-grow pt-20 relative z-10">
+        
+        <section class="relative min-h-[90vh] flex items-center justify-center py-20 px-4">
+            
+            <div class="max-w-5xl mx-auto text-center relative">
+                
+                <div class="inline-flex items-center space-x-3 px-5 py-2 rounded-full mythic-panel border border-gold-500/30 text-gold-400 text-xs font-cinzel tracking-widest uppercase mb-8 shadow-2xl">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>EST. 2021 &bull; SHADOW WARLORDS</span>
+                </div>
+
+                <!-- Main Clan Name -->
+                <h1 class="font-cinzel text-6xl sm:text-8xl lg:text-9xl font-black tracking-wider uppercase mb-4 leading-none select-none">
+                    <span class="gold-text-bright block drop-shadow-[0_10px_20px_rgba(0,0,0,0.95)]">QPAL</span>
+                </h1>
+
+                <!-- Slogan -->
+                <p class="font-cinzel font-bold text-xl sm:text-2xl text-emerald-300 tracking-widest uppercase mb-6 drop-shadow">
+                    Bound in Dark Emerald <span class="text-gold-400">&bull;</span> Forged in Gold
+                </p>
+
+                <p class="max-w-2xl mx-auto text-base sm:text-lg text-gray-300 font-rajdhani font-medium mb-10 leading-relaxed">
+                    An elite order operating from the dark jade abyss. We command battlefield dominance through lethal precision, unmatched synergy, and gold-standard execution.
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-5">
+                    <a href="#roster" class="w-full sm:w-auto px-8 py-4 btn-gold-shimmer text-emerald-1000 font-cinzel font-extrabold text-xs uppercase tracking-widest border border-gold-300 shadow-xl">
+                        View Champions <i class="fa-solid fa-shield-cat ml-2"></i>
+                    </a>
+                    <a href="#about" class="w-full sm:w-auto px-8 py-4 mythic-panel hover:bg-emerald-950/60 text-gold-400 font-cinzel font-bold text-xs uppercase tracking-widest border border-gold-500/30 transition-all hover:border-gold-400">
+                        Unveil Lore <i class="fa-solid fa-book-bookmark ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- Stats Counters -->
+                <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                    <div class="mythic-panel p-5 ornate-corner">
+                        <div class="font-cinzel text-3xl font-black gold-text-bright">18+</div>
+                        <div class="text-[11px] font-cinzel text-emerald-400 uppercase tracking-widest mt-1">Major Trophies</div>
+                    </div>
+                    <div class="mythic-panel p-5 ornate-corner">
+                        <div class="font-cinzel text-3xl font-black text-emerald-400">96.4%</div>
+                        <div class="text-[11px] font-cinzel text-emerald-400 uppercase tracking-widest mt-1">Win Ratio</div>
+                    </div>
+                    <div class="mythic-panel p-5 ornate-corner">
+                        <div class="font-cinzel text-3xl font-black gold-text-bright">#1</div>
+                        <div class="text-[11px] font-cinzel text-emerald-400 uppercase tracking-widest mt-1">Regional Rank</div>
+                    </div>
+                    <div class="mythic-panel p-5 ornate-corner">
+                        <div class="font-cinzel text-3xl font-black text-emerald-400">500K+</div>
+                        <div class="text-[11px] font-cinzel text-emerald-400 uppercase tracking-widest mt-1">Legion Reach</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="about" class="py-24 relative border-t border-gold-500/20 bg-emerald-1000/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-10 h-0.5 bg-gradient-to-r from-gold-500 to-transparent"></span>
+                            <span class="font-cinzel text-gold-400 text-xs tracking-widest uppercase font-bold">THE DARK CHRONICLES</span>
+                        </div>
+                        
+                        <h2 class="font-cinzel text-3xl sm:text-5xl font-black uppercase text-white tracking-wide">
+                            Forged in Emerald <span class="gold-text-gradient">Shadows</span>
+                        </h2>
+
+                        <p class="text-gray-300 text-lg leading-relaxed font-rajdhani">
+                            In the deep dark realm of high-stakes competitive gaming, <strong class="text-gold-400">QPAL</strong> emerged from absolute focus and ruthless tactical devotion. What began as an impenetrable brotherhood of five high-tier commanders has evolved into a global dark-emerald gaming syndicate.
+                        </p>
+
+                        <p class="text-gray-400 leading-relaxed font-rajdhani">
+                            Empowered by the dark jade aura of precision and crowned in gold victory, our members excel across multiple tactical combat titles, battle royales, and fighting arenas. We treat every match as an ancient tournament—where second place is forgotten, and dominance is absolute.
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                            <div class="mythic-panel p-4 border-l-2 border-gold-500">
+                                <i class="fa-solid fa-eye text-gold-400 text-lg mb-2"></i>
+                                <h3 class="font-cinzel font-bold text-white text-sm">VISION</h3>
+                                <p class="text-xs text-gray-400 mt-1">Reading the battle before it unveils.</p>
+                            </div>
+                            <div class="mythic-panel p-4 border-l-2 border-emerald-600">
+                                <i class="fa-solid fa-gem text-emerald-400 text-lg mb-2"></i>
+                                <h3 class="font-cinzel font-bold text-white text-sm">PRECISION</h3>
+                                <p class="text-xs text-gray-400 mt-1">Deadly accuracy in critical moments.</p>
+                            </div>
+                            <div class="mythic-panel p-4 border-l-2 border-gold-500">
+                                <i class="fa-solid fa-ring text-gold-400 text-lg mb-2"></i>
+                                <h3 class="font-cinzel font-bold text-white text-sm">VALOR</h3>
+                                <p class="text-xs text-gray-400 mt-1">Standing firm against impossible odds.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mythic Crest Graphic -->
+                    <div class="lg:col-span-5 relative">
+                        <div class="mythic-panel p-8 text-center ornate-corner">
+                            <div class="w-48 h-48 mx-auto rounded-full bg-gradient-to-tr from-emerald-1000 via-emerald-900 to-gold-500 p-1 shadow-2xl relative group">
+                                <div class="w-full h-full rounded-full bg-emerald-1000 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-emerald-800/10 rounded-full animate-pulse"></div>
+                                    <span class="font-cinzelDeco font-black text-6xl gold-text-bright z-10">Q</span>
+                                    <span class="font-cinzel text-xs text-emerald-400 font-bold tracking-widest mt-2 z-10">QPAL SQUAD</span>
+                                </div>
+                            </div>
+                            <h3 class="font-cinzel text-xl font-bold text-white mt-6 uppercase">The Dark Seal</h3>
+                            <p class="text-xs text-gray-400 mt-2 font-rajdhani">Worn by verified roster champions around the globe.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="roster" class="py-24 relative border-t border-gold-500/20 bg-emerald-1000">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-3xl mx-auto mb-12">
+                    <span class="font-cinzel text-gold-400 text-xs tracking-widest uppercase font-bold">DARK EMERALD LEGION</span>
+                    <h2 class="font-cinzel text-4xl sm:text-5xl font-black text-white uppercase mt-2">
+                        Squad <span class="gold-text-gradient">Roster</span>
+                    </h2>
+                    <p class="text-gray-400 mt-2 font-rajdhani">Select a champion to inspect their stats and battle legacy.</p>
+
+                    <!-- Filter Tabs -->
+                    <div class="flex flex-wrap justify-center gap-2 mt-8 font-cinzel text-xs tracking-widest" id="roster-filters">
+                        <button data-filter="all" class="filter-btn active px-5 py-2.5 btn-gold-shimmer text-emerald-1000 font-bold border border-gold-300 transition-all">ALL MEMBERS</button>
+                        <button data-filter="leader" class="filter-btn px-5 py-2.5 mythic-panel text-gray-300 hover:text-gold-400 border border-gold-500/30 transition-all">OFFICERS</button>
+                      
+                    </div>
+                </div>
+
+                <!-- Member Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="roster-grid">
+                    
+                    <!-- Officer Captain -->
+                    <div class="roster-card mythic-panel mythic-card-hover p-6 ornate-corner cursor-pointer group"
+                         data-category="leader"
+                         onclick="openMemberModal('VINSI', 'Captain', 'Squad Captain', 'images/vinsi.png', 'Katana', 'Leads the squad with calm calls, disciplined strategy, and decisive frontline command.')">
+                        <div class="relative h-72 rounded overflow-hidden mb-4 border border-gold-500/20">
+                            <img src="images/vinsi.png" alt="VINSI" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-emerald-1000 via-transparent opacity-95"></div>
+                            <span class="absolute top-3 right-3 px-3 py-1 bg-gold-500 text-emerald-1000 font-cinzel text-[10px] font-black uppercase tracking-wider shadow">
+                                CAPTAIN
+                            </span>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-baseline">
+                                <h3 class="font-cinzel text-2xl font-black text-white group-hover:text-gold-400 transition-colors">VINSI</h3>
+                                <span class="text-xs font-mono text-emerald-400">#005</span>
+                            </div>
+                            <p class="text-xs font-cinzel text-gold-400/90 font-bold">SQUAD CAPTAIN</p>
+                            <p class="mt-4 pt-3 border-t border-gold-500/20 text-sm leading-relaxed text-gray-400 font-rajdhani">
+                                Leads the squad with calm calls, disciplined strategy, and decisive frontline command.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Member 1 -->
+                    <div class="roster-card mythic-panel mythic-card-hover p-6 ornate-corner cursor-pointer group" 
+                         data-category="leader offense"
+                         onclick="openMemberModal('BUBBLY', 'Tactical Specialist', 'Offense Specialist', 'images/bubbly.png', 'Pulse Rifle', 'Creates openings with quick movement, fearless pressure, and sharp offensive instincts.')">
+                        <div class="relative h-72 rounded overflow-hidden mb-4 border border-gold-500/20">
+                            <img src="images/bubbly.png" alt="BUBBLY" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-emerald-1000 via-transparent opacity-95"></div>
+                            <span class="absolute top-3 right-3 px-3 py-1 bg-gold-500 text-emerald-1000 font-cinzel text-[10px] font-black uppercase tracking-wider shadow">
+                                SPECIALIST
+                            </span>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-baseline">
+                                <h3 class="font-cinzel text-2xl font-black text-white group-hover:text-gold-400 transition-colors">BUBBLY</h3>
+                                <span class="text-xs font-mono text-emerald-400">#001</span>
+                            </div>
+                            <p class="text-xs font-cinzel text-gold-400/90 font-bold">OFFENSE SPECIALIST</p>
+                            <p class="mt-4 pt-3 border-t border-gold-500/20 text-sm leading-relaxed text-gray-400 font-rajdhani">
+                                Creates openings with quick movement, fearless pressure, and sharp offensive instincts.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Member 2 -->
+                    <div class="roster-card mythic-panel mythic-card-hover p-6 ornate-corner cursor-pointer group" 
+                         data-category="leader support"
+                         onclick="openMemberModal('PARRY', 'Tactical Support', 'Support Specialist', 'images/parry.png', 'Scout Drone', 'Strengthens the squad with reliable support, clear information, and adaptable team play.')">
+                        <div class="relative h-72 rounded overflow-hidden mb-4 border border-gold-500/20">
+                            <img src="images/parry.png" alt="PARRY" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-emerald-1000 via-transparent opacity-95"></div>
+                            <span class="absolute top-3 right-3 px-3 py-1 bg-gold-500 text-emerald-1000 font-cinzel text-[10px] font-black uppercase tracking-wider shadow">
+                                SUPPORT
+                            </span>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-baseline">
+                                <h3 class="font-cinzel text-2xl font-black text-white group-hover:text-gold-400 transition-colors">PARRY</h3>
+                                <span class="text-xs font-mono text-emerald-400">#005</span>
+                            </div>
+                            <p class="text-xs font-cinzel text-gold-400/90 font-bold">SUPPORT SPECIALIST</p>
+                            <p class="mt-4 pt-3 border-t border-gold-500/20 text-sm leading-relaxed text-gray-400 font-rajdhani">
+                                Strengthens the squad with reliable support, clear information, and adaptable team play.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Member 3 -->
+                    <div class="roster-card mythic-panel mythic-card-hover p-6 ornate-corner cursor-pointer group"
+                         data-category="leader"
+                         onclick="openMemberModal('WHITEFALL', 'Officer', 'Tactical Officer', 'images/whitefall.png', 'Frost Rifle', 'Brings calm command, precise coordination, and unshakable discipline to every operation.')">
+                        <div class="relative h-72 rounded overflow-hidden mb-4 border border-gold-500/20">
+                            <img src="images/whitefall.png" alt="WHITEFALL" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-emerald-1000 via-transparent opacity-95"></div>
+                            <span class="absolute top-3 right-3 px-3 py-1 bg-gold-500 text-emerald-1000 font-cinzel text-[10px] font-black uppercase tracking-wider shadow">
+                                OFFICER
+                            </span>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-baseline">
+                                <h3 class="font-cinzel text-2xl font-black text-white group-hover:text-gold-400 transition-colors">WHITEFALL</h3>
+                                <span class="text-xs font-mono text-emerald-400">#006</span>
+                            </div>
+                            <p class="text-xs font-cinzel text-gold-400/90 font-bold">TACTICAL OFFICER</p>
+                            <p class="mt-4 pt-3 border-t border-gold-500/20 text-sm leading-relaxed text-gray-400 font-rajdhani">
+                                Brings calm command, precise coordination, and unshakable discipline to every operation.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Clan Leader -->
+                    <div class="roster-card mythic-panel mythic-card-hover p-6 ornate-corner cursor-pointer group"
+                         data-category="leader"
+                         onclick="openMemberModal('SLEEPY', 'Clan Leader', 'Founder & Clan Leader', 'images/sleepy.png', 'Command Staff', 'Guides QPAL with decisive vision, steady leadership, and a commitment to the whole squad.')">
+                        <div class="relative h-72 rounded overflow-hidden mb-4 border border-gold-500/20">
+                            <img src="images/sleepy.png" alt="SLEEPY" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                            <div class="absolute inset-0 bg-gradient-to-t from-emerald-1000 via-transparent opacity-95"></div>
+                            <span class="absolute top-3 right-3 px-3 py-1 bg-gradient-to-r from-gold-500 to-gold-300 text-emerald-1000 font-cinzel text-[10px] font-black uppercase tracking-wider shadow">
+                                CLAN LEADER
+                            </span>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between items-baseline">
+                                <h3 class="font-cinzel text-2xl font-black text-white group-hover:text-gold-400 transition-colors">SLEEPY</h3>
+                                <span class="text-xs font-mono text-emerald-400">#000</span>
+                            </div>
+                            <p class="text-xs font-cinzel text-gold-400/90 font-bold">FOUNDER & CLAN LEADER</p>
+                            <p class="mt-4 pt-3 border-t border-gold-500/20 text-sm leading-relaxed text-gray-400 font-rajdhani">
+                                Guides QPAL with decisive vision, steady leadership, and a commitment to the whole squad.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="stats" class="py-24 relative border-t border-gold-500/20">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center mb-16">
+                    <span class="font-cinzel text-gold-400 text-xs tracking-widest uppercase font-bold">LEGENDARY TRIUMPHS</span>
+                    <h2 class="font-cinzel text-4xl sm:text-5xl font-black text-white uppercase mt-2">
+                        Hall of <span class="gold-text-gradient">Achievements</span>
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="mythic-panel p-8 text-center ornate-corner">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-1000 border border-gold-500/30 flex items-center justify-center text-gold-400 text-2xl shadow-lg">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white uppercase">Apex Masters 2024</h3>
+                        <p class="text-xs font-cinzel text-emerald-400 mt-1">1st Place Grand Champions</p>
+                        <p class="text-xs text-gray-400 mt-3 font-rajdhani">Swept the grand final stage without losing a single round map.</p>
+                    </div>
+
+                    <div class="mythic-panel p-8 text-center ornate-corner">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-1000 border border-gold-500/30 flex items-center justify-center text-gold-400 text-2xl shadow-lg">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white uppercase">Regional Dominance</h3>
+                        <p class="text-xs font-cinzel text-emerald-400 mt-1">Undefeated Season Title</p>
+                        <p class="text-xs text-gray-400 mt-3 font-rajdhani">Ranked #1 for 14 consecutive months across major tactical leagues.</p>
+                    </div>
+
+                    <div class="mythic-panel p-8 text-center ornate-corner">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-1000 border border-gold-500/30 flex items-center justify-center text-gold-400 text-2xl shadow-lg">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="font-cinzel text-xl font-bold text-white uppercase">Shadow Invitational</h3>
+                        <p class="text-xs font-cinzel text-emerald-400 mt-1">International Gold Medallion</p>
+                        <p class="text-xs text-gray-400 mt-3 font-rajdhani">Defeated world-class squads in midnight stadium cup.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="join" class="py-24 relative border-t border-gold-500/20 bg-emerald-1000/90">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mythic-panel p-8 sm:p-12 ornate-corner">
+                    
+                    <div class="text-center space-y-3 mb-10">
+                        <span class="font-cinzel text-gold-400 text-xs tracking-widest uppercase font-bold">JOIN THE EMERALD SYNDICATE</span>
+                        <h2 class="font-cinzel text-3xl sm:text-4xl font-black text-white uppercase">Pledge Your Loyalty</h2>
+                        <p class="text-gray-400 text-sm font-rajdhani max-w-xl mx-auto">Only the dedicated survive our trials. Submit your credentials to initiate trial evaluation.</p>
+                    </div>
+
+                    <form id="recruitment-form" class="space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 font-rajdhani">
+                            <div>
+                                <label class="block font-cinzel text-xs text-gold-400 uppercase mb-2">In-Game Alias / Handle *</label>
+                                <input type="text" required placeholder="e.g. ShadowViper" class="w-full bg-emerald-1000 border border-gold-500/30 rounded-none px-4 py-3 text-white focus:outline-none focus:border-gold-400 transition-colors">
+                            </div>
+                            <div>
+                                <label class="block font-cinzel text-xs text-gold-400 uppercase mb-2">Discord ID / Contact *</label>
+                                <input type="text" required placeholder="alias#1234 or email" class="w-full bg-emerald-1000 border border-gold-500/30 rounded-none px-4 py-3 text-white focus:outline-none focus:border-gold-400 transition-colors">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 font-rajdhani">
+                            <div>
+                                <label class="block font-cinzel text-xs text-gold-400 uppercase mb-2">Primary Game / Title</label>
+                                <select class="w-full bg-emerald-1000 border border-gold-500/30 rounded-none px-4 py-3 text-white focus:outline-none focus:border-gold-400 transition-colors">
+                                    <option value="valorant">Tactical Shooter (Valorant / CS2)</option>
+                                    <option value="apex">Apex Legends / Battle Royale</option>
+                                    <option value="fighting">Fighting Games / Arena</option>
+                                    <option value="creator">Content Creator / Streamer</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-cinzel text-xs text-gold-400 uppercase mb-2">Highest Rank / Tournament Experience</label>
+                                <input type="text" placeholder="e.g. Radiant / Global Elite" class="w-full bg-emerald-1000 border border-gold-500/30 rounded-none px-4 py-3 text-white focus:outline-none focus:border-gold-400 transition-colors">
+                            </div>
+                        </div>
+
+                        <div class="font-rajdhani">
+                            <label class="block font-cinzel text-xs text-gold-400 uppercase mb-2">Why do you belong in QPAL?</label>
+                            <textarea rows="4" placeholder="Briefly describe your playstyle, previous team history, or link your clips..." class="w-full bg-emerald-1000 border border-gold-500/30 rounded-none px-4 py-3 text-white focus:outline-none focus:border-gold-400 transition-colors"></textarea>
+                        </div>
+
+                        <div class="text-center pt-4">
+                            <button type="submit" class="w-full sm:w-auto px-12 py-4 btn-gold-shimmer text-emerald-1000 font-cinzel font-black text-xs uppercase tracking-widest border border-gold-300">
+                                Transmit Oath <i class="fa-solid fa-paper-plane ml-2"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="form-toast" class="hidden mt-6 p-4 mythic-panel border border-gold-400 text-center text-gold-400 font-cinzel text-xs rounded">
+                        <i class="fa-solid fa-circle-check text-base mb-1 block"></i>
+                        Your oath has been sealed in the emerald archives. Our council will reach out soon.
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="member-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+        <div class="mythic-panel max-w-xl w-full p-8 ornate-corner relative border border-gold-500/40 shadow-2xl">
+            <button onclick="closeMemberModal()" class="absolute top-4 right-4 text-gold-400 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+                <img id="modal-img" src="" alt="Member Avatar" class="w-32 h-32 rounded-full border-2 border-gold-400 object-cover shadow-lg">
+                <div class="text-center sm:text-left space-y-1">
+                    <span id="modal-badge" class="px-3 py-1 bg-gold-500 text-emerald-1000 font-cinzel text-[10px] font-black uppercase"></span>
+                    <h3 id="modal-name" class="font-cinzel text-3xl font-black text-white gold-text-bright"></h3>
+                    <p id="modal-role" class="text-xs font-cinzel text-emerald-400 font-bold"></p>
+                    <p id="modal-weapon" class="text-xs text-gray-400 font-rajdhani mt-1"></p>
+                </div>
+            </div>
+            
+            <p id="modal-details" class="my-6 border-t border-gold-500/20 pt-4 text-center text-gray-300 font-rajdhani leading-relaxed"></p>
+
+            <button onclick="closeMemberModal()" class="w-full py-2.5 mythic-panel text-gold-400 hover:text-white font-cinzel text-xs font-bold border border-gold-500/30">
+                Close Dossier
+            </button>
+        </div>
+    </div>
+
+    <footer class="mythic-panel border-t border-gold-500/20 py-12 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-1000 to-gold-500 p-0.5">
+                        <div class="w-full h-full rounded-full bg-emerald-1000 flex items-center justify-center font-cinzelDeco text-xs text-gold-400">Q</div>
+                    </div>
+                    <span class="font-cinzel font-black text-xl gold-text-bright">QPAL</span>
+                    <span class="text-xs font-cinzel text-emerald-400/60 ml-2">&bull; BOUND IN DARK EMERALD, FORGED IN GOLD</span>
+                </div>
+
+                <div class="flex items-center space-x-6 text-gold-400 text-lg">
+                    <a href="#" class="hover:text-gold-300 transition-colors"><i class="fa-brands fa-discord"></i></a>
+                    <a href="#" class="hover:text-gold-300 transition-colors"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="hover:text-gold-300 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="hover:text-gold-300 transition-colors"><i class="fa-brands fa-twitch"></i></a>
+                </div>
+
+                <div class="text-xs text-gray-500 font-cinzel">
+                    &copy; 2026 QPAL Esports Order. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
